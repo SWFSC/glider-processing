@@ -1,10 +1,22 @@
-# SWFSC-Template
+# glider-processing
 
-The README provides a description of the repository. The README file will vary greatly depending on the repo contents. 
+Repository of the Ecosystem Science Division (ESD) glider lab at the Southwest Fisheries Science Center (SWFSC), for processing glider data. 
 
-## License
+See the [glider lab manual](https://swfsc.github.io/glider-lab-manual) for more in-depth info.
 
-User task: Choose an open source license, depending on the repo contents and the [latest NMFS guidance](https://nmfs-opensci.github.io/GitHub-Guide/#sec-license). You do not need to keep this 'License' section in your repo readme.
+## Directories
+
+### deployment-configs
+
+Deployment config files, for each deployment. These yaml files are used during data processing by [pyglider](https://github.com/c-proof/pyglider) and [esdglider](https://github.com/SWFSC/esdglider). These files are typically created by first using esdglider's [generate-deployment_yaml](https://github.com/SWFSC/esdglider/blob/main/esdglider/config.py) to make a file with the basic info, and then editing that file (e.g., adding the comment and summary blocks) by hand.
+
+### deployment-reports
+
+ESD glider deployment reports, created as Quarto documents. See the readme in this folder for more details.
+
+### deployment-scripts
+
+Scripts used for processing data from glider deployments. Typically, these scripts are run on GCP workstations to create netCDF files from the delayed binary data after a glider has been recovered, apply any corrections, and format the files as needed to make them publicly available.
 
 ## Disclaimer
 
