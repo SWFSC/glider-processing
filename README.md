@@ -8,7 +8,7 @@ See the [glider lab manual](https://swfsc.github.io/glider-lab-manual) for more 
 
 ### deployment-configs
 
-Deployment config files, for each deployment. These yaml files are used during data processing by [pyglider](https://github.com/c-proof/pyglider) and [esdglider](https://github.com/SWFSC/esdglider). These files are typically created by first using esdglider's [generate-deployment_yaml](https://github.com/SWFSC/esdglider/blob/main/esdglider/config.py) to make a file with the basic info, and then editing that file (e.g., adding the comment and summary blocks) by hand.
+Deployment config files, for each deployment. These yaml files are used during data processing by [esdglider](https://github.com/SWFSC/esdglider). These files are typically created by first using esdglider's [generate-deployment_yaml](https://github.com/SWFSC/esdglider/blob/main/esdglider/config.py) to make a file with the basic info, and then editing that file (e.g., adding the comment and summary blocks) by hand.
 
 ### deployment-reports
 
