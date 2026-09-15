@@ -22,38 +22,34 @@ prof_args = {}          # Named optional parameters for finding profiles
 # Define directories
 home = Path.home()
 mnt_path = home / "mnt-gcs"
-cac_path = home / "standard-glider-files" / "Cache"
-config_path = home / "glider-lab" / "deployment-configs"
+# cac_path = home / "standard-glider-files" / "Cache"
+# config_path = home / "glider-processing" / "deployment-configs"
 
 # Bucket names and paths
 logs_bucket_name = "swfscesd-glider-logs"
-data_in_bucket_name = "swfscesd-glider-deployments-data-in"
-data_out_bucket_name = "swfscesd-glider-deployments-data-out"
+# data_in_bucket_name = "swfscesd-glider-deployments-data-in"
+# data_out_bucket_name = "swfscesd-glider-deployments-data-out"
 # aa_in_bucket_name = "swfscesd-glider-active-acoustics-data-in"
 # imagery_in_bucket_name = "swfscesd-glider-imagery-data-in"
 # imagery_meta_bucket_name = "swfscesd-glider-imagery-metadata"
 
 logs_path = mnt_path / logs_bucket_name
-data_in_path = mnt_path / data_in_bucket_name
-data_out_path = mnt_path / data_out_bucket_name
+# data_in_path = mnt_path / data_in_bucket_name
+# data_out_path = mnt_path / data_out_bucket_name
 # aa_in_path = mnt_path / aa_in_bucket_name
 # imagery_in_path = mnt_path / imagery_in_bucket_name
 # imagery_meta_path = mnt_path / imagery_meta_bucket_name
 
 # Misc
-file_info = f"https://github.com/SWFSC/glider-lab: {Path(__file__).name}"
-log_file_name = f"{Path(__file__).stem}.log"
+# file = Path(__file__)
+# file_info = f"https://github.com/SWFSC/glider-processing: {file.name}"
+# log_file_name = f"{file.stem}.log"
+file_info, log_file_name = paths.get_file_info(Path(__file__))
 
 
 #------------------------------------------------------------------------------
 if __name__ == "__main__":
     gcp.gcs_mount_bucket(logs_bucket_name, logs_path, ro=False)
-    gcp.gcs_mount_bucket(data_in_bucket_name, data_in_path, ro=True)
-    gcp.gcs_mount_bucket(data_out_bucket_name, data_out_path, ro=False)
-    # gcp.gcs_mount_bucket(aa_in_bucket_name, aa_in_path, ro=True)
-    # gcp.gcs_mount_bucket(imagery_in_bucket_name, imagery_in_path, ro=True)
-    # gcp.gcs_mount_bucket(imagery_meta_bucket_name, imagery_meta_path, ro=True)
-
     logging.basicConfig(
         filename=logs_path / log_file_name,
         filemode="w",
@@ -65,15 +61,18 @@ if __name__ == "__main__":
     logger.info("Beginning scheduled processing for %s", file_info)
     print(f"Writing logs to {logs_path / log_file_name}")
 
-    logger.info("Generating glider paths")
+    logger.info("Generating glider paths---------------------")
     glider_paths = paths.get_path_glider(
         deployment_name = deployment_name, 
         mode = mode, 
-        config_path = config_path, 
-        data_in_path = data_in_path, 
-        data_out_path = data_out_path, 
-        cac_path = cac_path, 
+        # config_path = config_path, 
+        # data_in_path = data_in_path, 
+        # data_out_path = data_out_path, 
+        home_path = home,
+        # cac_path = cac_path, 
     )
+    gcp.gcs_mount_bucket(paths.data_in_bucket_name, glider_paths["data_in_path"], ro=True)
+    gcp.gcs_mount_bucket(paths.data_out_bucket_name, glider_paths["data_out_path"], ro=False)
 
 
     #--------------------------------------------------------------------------
@@ -139,21 +138,26 @@ if __name__ == "__main__":
     # tssci = xr.load_dataset(outname_dict["outname_tssci"])
 
     # logger.info("Active Acoustics---------------------")
+    # aa_paths = paths.get_path_aa(deployment_name, mode, home_path=home)
     # aa_paths = paths.get_path_aa(
     #     deployment_name, 
     #     mode, 
-    #     aa_in_path=aa_in_path, 
-    #     data_out_path=data_out_path, 
+    #     home_path=home,
+    #     # aa_in_path=aa_in_path, 
+    #     # data_out_path=data_out_path, 
     # )
     # aa.ancillary_echoview(tssci, aa_paths)
     
     # logger.info("Imagery---------------------")
+    # img_paths = paths.get_path_imagery(deployment_name, home_path=home)
     # img_paths = paths.get_path_imagery(
     #     deployment_name = deployment_name, 
-    #     imagery_in_path = imagery_in_path, 
-    #     imagery_meta_path = imagery_meta_path, 
-    #     data_out_path = data_out_path, 
+    #     home_path=home, 
+    #     # imagery_in_path = imagery_in_path, 
+    #     # imagery_meta_path = imagery_meta_path, 
+    #     # data_out_path = data_out_path, 
     # )
+    # gcp.gcs_mount_bucket(paths.imagery_meta_bucket_name, img_paths["imagery_meta_path"], ro=True)
     # imagery.imagery_timeseries(tssci, img_paths)
 
     #--------------------------------------------------------------------------
