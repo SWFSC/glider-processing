@@ -1,12 +1,11 @@
 import logging
-
-# import numpy as np
-# import xarray as xr
 from pathlib import Path
 
+# import esdglider.profiles as prof
+# import numpy as np
+# import xarray as xr
 from esdglider.slocum import pipeline
 
-# import esdglider.profiles as prof
 from esdglider import aa, gcp, imagery, paths, plots, qartod, utils
 
 logger = logging.getLogger(__name__)
