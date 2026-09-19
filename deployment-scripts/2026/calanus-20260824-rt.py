@@ -6,7 +6,7 @@ from pathlib import Path
 
 from esdglider.slocum import pipeline, rt
 
-from esdglider import gcp, paths, plots, qartod
+from esdglider import gcp, paths, plots, qartod, utils
 
 logger = logging.getLogger(__name__)
 
@@ -110,28 +110,6 @@ if __name__ == "__main__":
 
 
     #--------------------------------------------------------------------------
-    # ### Ancillary data products
-    # tssci = xr.load_dataset(outname_dict["outname_tssci"])
-
-    # logger.info("Active Acoustics---------------------")
-    # aa_paths = paths.get_path_aa(
-    #     deployment_name, 
-    #     mode, 
-    #     aa_in_path=aa_in_path, 
-    #     data_out_path=data_out_path, 
-    # )
-    # aa.ancillary_echoview(tssci, aa_paths)
-    
-    # logger.info("Imagery---------------------")
-    # img_paths = paths.get_path_imagery(
-    #     deployment_name = deployment_name, 
-    #     imagery_in_path = imagery_in_path, 
-    #     imagery_meta_path = imagery_meta_path, 
-    #     data_out_path = data_out_path, 
-    # )
-    # imagery.imagery_timeseries(tssci, img_paths)
-
-    #--------------------------------------------------------------------------
     ### Plots
     logger.info("Generating plots---------------------")
     etopo_path = home / "ETOPO_2022_v1_15s_N45W135_erddap.nc"
@@ -143,13 +121,13 @@ if __name__ == "__main__":
     )
 
     #--------------------------------------------------------------------------
-    # ### Generate profile netCDF files for the DAC
-    # core.ngdac_profiles(
-    #     outname_dict["outname_tssci"], 
-    #     glider_paths['profdir'], 
-    #     glider_paths['deploymentyaml'],
-    #     force=True, 
-    # )
+    ### Generate profile netCDF files for the DAC
+    utils.create_ngdac_profiles(
+        inname=outname_dict["outname_tssci"],
+        outdir=glider_paths["ngdacdir"],
+        deploymentyaml=glider_paths["deploymentyaml"],
+        force=True,
+    )
 
     #--------------------------------------------------------------------------
     logger.info("Completed scheduled processing")

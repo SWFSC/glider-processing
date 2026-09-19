@@ -183,13 +183,13 @@ if __name__ == "__main__":
     #     figsize_y=8.5,
     # )
 
-    #--------------------------------------------------------------------------
+    # --------------------------------------------------------------------------
     # ### Generate profile netCDF files for the DAC
-    # core.ngdac_profiles(
-    #     outname_dict["outname_tssci"], 
-    #     glider_paths['profdir'], 
-    #     glider_paths['deploymentyaml'],
-    #     force=True, 
+    # utils.create_ngdac_profiles(
+    #     inname=outname_dict["outname_tssci"],
+    #     outdir=glider_paths["ngdacdir"],
+    #     deploymentyaml=glider_paths["deploymentyaml"],
+    #     force=True,
     # )
 
     #--------------------------------------------------------------------------

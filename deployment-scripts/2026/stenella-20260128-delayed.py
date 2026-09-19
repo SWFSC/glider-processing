@@ -26,10 +26,9 @@ prof_args = {
 ### Consistent variables
 # Define directories
 home = Path.home()
-mnt_path = home / "gcs-mnt"
 mnt_path = home / "mnt-gcs"
 cac_path = home / "standard-glider-files" / "Cache"
-config_path = home / "glider-lab" / "deployment-configs"
+config_path = home / "glider-processing" / "deployment-configs" / "2026"
 
 # Bucket names and paths
 logs_bucket_name = "swfscesd-glider-logs"
@@ -66,9 +65,10 @@ if __name__ == "__main__":
     glider_paths = paths.get_path_glider(
         deployment_name = deployment_name, 
         mode = mode, 
+        # home_path=home, 
         config_path = config_path, 
         data_in_path = data_in_path, 
-        data_out_path = data_out_path, 
+        data_out_path = "/home/user/stenella-tmmp",  #data_out_path, 
         cac_path = cac_path, 
     )
 
