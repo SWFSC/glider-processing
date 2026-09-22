@@ -1,3 +1,9 @@
+# Script for scraping and processing near real-time data from calanus-20260824
+# To complete, within cloud shell, and run the following
+# ./rclone_install.sh
+# rlone copy gcp-prod:swfscesd-glider-deployments-data-out/2026/calanus-20260824/plots/rt "drive-smw:Data Shares/esd-glider-data-share/calanus-20260824/plots-rt" --progress
+# rclone copy gcp-prod:swfscesd-glider-deployments-data-out/2026/calanus-20260824/processed-L1/calanus-20260824-rt-sci.nc "drive-smw:Data Shares/esd-glider-data-share/calanus-20260824/" --progress
+
 import logging
 
 # import numpy as np
@@ -50,11 +56,12 @@ if __name__ == "__main__":
 
     logger.info("Rsyncing nrt files from SFMC to GCP---------------------")
     rt.scrape_sfmc(
-        deployment_name, 
-        "swfscesd-glider-deployments-data-in", 
-        "/home/user/sfmc", 
-        "ggn-nmfs-swfscesd-prod-1", 
-        "sfmc-swoodman"
+        deployment_name=deployment_name, 
+        bucket_name=paths.data_in_bucket_name, 
+        sfmc_path=str(home / "sfmc"), 
+        cache_path=glider_paths["cacdir"], 
+        gcpproject_id="ggn-nmfs-swfscesd-prod-1", 
+        secret_id="sfmc-swoodman"
     )
 
     #--------------------------------------------------------------------------
@@ -84,12 +91,12 @@ if __name__ == "__main__":
     #         {"time": slice("2026-02-01 09:05", "2026-02-01 09:16:10")}
     #     ] = 397
 
-        # pipeline.complete_profile_correction(
-        #     tsraw=tsraw,
-        #     tseng=xr.load_dataset(outname_dict_ts["outname_tseng"]),
-        #     tssci=xr.load_dataset(outname_dict_ts["outname_tssci"]),
-        #     glider_paths=glider_paths,
-        # )
+    #     pipeline.complete_profile_correction(
+    #         tsraw=tsraw,
+    #         tseng=xr.load_dataset(outname_dict_ts["outname_tseng"]),
+    #         tssci=xr.load_dataset(outname_dict_ts["outname_tssci"]),
+    #         glider_paths=glider_paths,
+    #     )
 
     # Create qc variables for science netCDF files, after corrections
     if write_nc:

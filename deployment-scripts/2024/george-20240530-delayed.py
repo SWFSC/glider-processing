@@ -58,7 +58,7 @@ if __name__ == "__main__":
         config_path = config_path, 
         data_in_path = data_in_path, 
         data_out_path = data_out_path, 
-        cac_path = cac_path, 
+        cache_path = cac_path, 
     )
 
     ### Generate netCDF files and plots
