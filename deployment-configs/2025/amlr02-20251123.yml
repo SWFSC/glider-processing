@@ -1,4 +1,5 @@
 metadata:
+  Metadata_Conventions: Unidata Dataset Discovery v1.0, COARDS, CF-1.8
   acknowledgment: This work was supported by funding from NOAA.
   comment: glider had an aft leak and was recovered early
   contributor_name: Heidi Taylor, Jennifer Walsh, Anthony Cossio, Tegan Murray, Samuel
@@ -8,8 +9,9 @@ metadata:
   creator_email: nmfs.swfsc.esd-gliders@noaa.gov
   creator_name: Kourtney Burger
   creator_url: https://www.fisheries.noaa.gov/about/southwest-fisheries-science-center
-  deployment_id: '1052'
   deployment_name: amlr02-20251123
+  disclaimer: This data may be redistributed and used without restriction. Data provided
+    as is with no expressed or implied assurance of quality assurance or quality control
   format_version: IOOS_Glider_NetCDF_v2.0.nc
   glider_instrument_name: slocum
   glider_model: Teledyne Webb Research Slocum G3 glider
@@ -23,15 +25,16 @@ metadata:
     > Salinity, In Situ Ocean-based platforms > Seaglider, glider, Slocum, trajectory,
     underwater glider, water, wmo
   keywords_vocabulary: GCMD Science Keywords
-  license: This data may be redistributed and used without restriction. Data provided
-    as is with no expressed or implied assurance of quality assurance or quality control.
-  Metadata_Conventions: Unidata Dataset Discovery v1.0, COARDS, CF-1.8
+  license: These data were produced by NOAA and are not subject to copyright protection
+    in the United States. NOAA waives any potential copyright and related rights in
+    thse data worldwide through the Creative Commons Zero 1.0 Universal Public Domain
+    Dedication (CC0-1.0, https://creativecommons.org/publicdomain/zero/1.0/).
   metadata_link: https://swfsc.github.io/glider-lab-manual/
   naming_authority: gov.noaa.fisheries
   os_version: '8.6'
   platform_type: Slocum Glider
   project: FREEBYRD
-  publisher_email: sam.woodman@noaa.gov
+  publisher_email: nmfs.swfsc.esd-gliders@noaa.gov
   publisher_name: Sam Woodman
   publisher_url: https://www.fisheries.noaa.gov/about/southwest-fisheries-science-center
   references: https://swfsc.github.io/glider-lab-manual/, https://github.com/c-proof/pyglider,
@@ -60,6 +63,18 @@ glider_devices:
     description: Pumped, Continuous Profile Unit Version 2, G-1451
     platform: platform
     type: instrument
+  instrument_echosounder:
+    _FillValue: -999
+    make_model: Nortek Signature 100 Compact Echosounder
+    serial_number: '107475'
+    calibration_date: '2025-07-29'
+    factory_calibrated: ''
+    calibration_report: https://github.com/SWFSC/glider-lab/tree/main/calibration-docs
+    comment: ''
+    description: Signature 100 compact echosounder for gliders
+    platform: platform
+    type: instrument
+    long_name: Nortek Sig 100 Compact Echosounder
   instrument_flbbcd:
     _FillValue: -999
     long_name: Optical Backscatter, Chlorophyll, and CDOM Fluorescence Sensor
@@ -70,18 +85,6 @@ glider_devices:
     calibration_report: https://github.com/SWFSC/glider-lab/tree/main/calibration-docs
     comment: ''
     description: flurometer, scattering meter, and cdom 301771
-    platform: platform
-    type: instrument
-  instrument_oxygen:
-    _FillValue: -999
-    long_name: Oxygen Optode
-    make_model: Aanderaa Oxygen Optode 4831
-    serial_number: '947'
-    calibration_date: '2021-02-14'
-    factory_calibrated: '2021-02-14'
-    calibration_report: https://github.com/SWFSC/glider-lab/tree/main/calibration-docs
-    comment: ''
-    description: ''
     platform: platform
     type: instrument
   instrument_glidercam:
@@ -97,18 +100,18 @@ glider_devices:
     platform: platform
     type: instrument
     long_name: Wassoc Glidercam
-  instrument_echosounder:
+  instrument_oxygen:
     _FillValue: -999
-    make_model: Nortek Signature 100 Compact Echosounder
-    serial_number: '107475'
-    calibration_date: '2025-07-29'
-    factory_calibrated: ''
+    long_name: Oxygen Optode
+    make_model: Aanderaa Oxygen Optode 4831
+    serial_number: '947'
+    calibration_date: '2021-02-14'
+    factory_calibrated: '2021-02-14'
     calibration_report: https://github.com/SWFSC/glider-lab/tree/main/calibration-docs
     comment: ''
-    description: Signature 100 compact echosounder for gliders
+    description: ''
     platform: platform
     type: instrument
-    long_name: Nortek Sig 100 Compact Echosounder
 netcdf_variables:
   time:
     source: sci_m_present_time
@@ -200,6 +203,7 @@ netcdf_variables:
     units: ppb
     observation_type: calculated
     instrument: instrument_flbbcd
+    valid_min: 0.0
   backscatter_700:
     source: sci_flbbcd_bb_units
     long_name: 700 nm wavelength backscatter
@@ -207,6 +211,7 @@ netcdf_variables:
     units: m-1 sr-1
     observation_type: calculated
     instrument: instrument_flbbcd
+    valid_min: 0.0
   oxygen_concentration:
     source: sci_oxy4_oxygen
     long_name: oxygen concentration
@@ -223,6 +228,8 @@ netcdf_variables:
     units: percent
     observation_type: measured
     instrument: instrument_oxygen
+    valid_min: 0.0
+    valid_max: 120.0
   heading:
     source: m_heading
     long_name: glider heading angle
@@ -354,3 +361,5 @@ profile_variables:
     calendar: gregorian
     units: seconds since 1970-01-01T00:00:00Z
     observation_type: calculated
+  instrument_ctd:
+    comment: placeholder for pyglider profile extraction

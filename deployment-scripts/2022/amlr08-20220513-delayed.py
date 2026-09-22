@@ -4,7 +4,7 @@ from pathlib import Path
 import xarray as xr
 from esdglider.slocum import pipeline
 
-from esdglider import aa, gcp, imagery, paths, plots, qartod
+from esdglider import aa, gcp, imagery, paths, plots, qartod, utils
 
 logger = logging.getLogger(__name__)
 
@@ -15,41 +15,15 @@ mode = "delayed"
 write_nc = True
 
 ### Consistent variables
-# Define directories
 home = Path.home()
-mnt_path = home / "mnt-gcs"
-cac_path = home / "standard-glider-files" / "Cache"
-config_path = home / "glider-lab" / "deployment-configs"
-
-# Bucket names and paths
 logs_bucket_name = "swfscesd-glider-logs"
-data_in_bucket_name = "swfscesd-glider-deployments-data-in"
-data_out_bucket_name = "swfscesd-glider-deployments-data-out"
-imagery_in_bucket_name = "swfscesd-glider-imagery-data-in"
-imagery_meta_bucket_name = "swfscesd-glider-imagery-metadata"
-aa_in_bucket_name = "swfscesd-glider-active-acoustics-data-in"
-
-logs_path = mnt_path / logs_bucket_name
-data_in_path = mnt_path / data_in_bucket_name
-data_out_path = mnt_path / data_out_bucket_name
-imagery_in_path = mnt_path / imagery_in_bucket_name
-imagery_meta_path = mnt_path / imagery_meta_bucket_name
-aa_in_path = mnt_path / aa_in_bucket_name
-
-# Misc
-file_info = f"https://github.com/SWFSC/glider-lab: {Path(__file__).name}"
-log_file_name = f"{deployment_name}-{mode}.log"
+logs_path = home / "mnt-gcs" / logs_bucket_name
+file_info, log_file_name = paths.get_file_info(Path(__file__))
 
 
 #------------------------------------------------------------------------------
 if __name__ == "__main__":
-    # Mount the buckets
     gcp.gcs_mount_bucket(logs_bucket_name, logs_path, ro=False)
-    gcp.gcs_mount_bucket(data_in_bucket_name, data_in_path, ro=True)
-    gcp.gcs_mount_bucket(data_out_bucket_name, data_out_path, ro=False)
-    gcp.gcs_mount_bucket(imagery_in_bucket_name, imagery_in_path, ro=True)
-    gcp.gcs_mount_bucket(imagery_meta_bucket_name, imagery_meta_path, ro=True)
-
     logging.basicConfig(
         filename=logs_path / log_file_name,
         filemode="w",
@@ -65,12 +39,10 @@ if __name__ == "__main__":
     glider_paths = paths.get_path_glider(
         deployment_name = deployment_name, 
         mode = mode, 
-        config_path = config_path, 
-        data_in_path = data_in_path, 
-        data_out_path = data_out_path, 
-        cac_path = cac_path, 
+        home_path = home,
     )
-
+    gcp.gcs_mount_bucket(paths.data_in_bucket_name, glider_paths["data_in_path"], ro=True)
+    gcp.gcs_mount_bucket(paths.data_out_bucket_name, glider_paths["data_out_path"], ro=False)
     #--------------------------------------------------------------------------
     ### Timeseries and gridded netCDF generation
     logger.info("Generating timeseries netCDF files---------------------") 
@@ -110,21 +82,12 @@ if __name__ == "__main__":
     tssci = xr.load_dataset(outname_dict["outname_tssci"])
 
     logger.info("Active Acoustics---------------------")
-    aa_paths = paths.get_path_aa(
-        deployment_name, 
-        mode, 
-        aa_in_path=aa_in_path, 
-        data_out_path=data_out_path, 
-    )
+    aa_paths = paths.get_path_aa(deployment_name, mode, home_path=home)
     aa.ancillary_echoview(tssci, aa_paths)
 
     logger.info("Imagery---------------------")
-    img_paths = paths.get_path_imagery(
-        deployment_name = deployment_name, 
-        imagery_in_path = imagery_in_path, 
-        imagery_meta_path = imagery_meta_path, 
-        data_out_path = data_out_path, 
-    )
+    img_paths = paths.get_path_imagery(deployment_name, home_path=home)
+    gcp.gcs_mount_bucket(paths.imagery_meta_bucket_name, img_paths["imagery_meta_path"], ro=True)
     imagery.imagery_timeseries(tssci, img_paths)
 
     #--------------------------------------------------------------------------
@@ -139,11 +102,13 @@ if __name__ == "__main__":
     )
     
     #--------------------------------------------------------------------------
-    # ### Generate profile netCDF files for the DAC
-    # glider.ngdac_profiles(
-    #     outname_dict["outname_tssci"], paths['profdir'], paths['deploymentyaml'],
-    #     force=True
-    # )
+    ### Generate profile netCDF files for the DAC
+    utils.create_ngdac_profiles(
+        inname=outname_dict["outname_tssci"],
+        outdir=glider_paths["ngdacdir"],
+        deploymentyaml=glider_paths["deploymentyaml"],
+        force=True,
+    )
 
     #--------------------------------------------------------------------------
     logger.info("Completed scheduled processing")

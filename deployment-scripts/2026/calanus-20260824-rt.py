@@ -1,3 +1,9 @@
+# Script for scraping and processing near real-time data from calanus-20260824
+# To complete, within cloud shell, and run the following
+# ./rclone_install.sh
+# rlone copy gcp-prod:swfscesd-glider-deployments-data-out/2026/calanus-20260824/plots/rt "drive-smw:Data Shares/esd-glider-data-share/calanus-20260824/plots-rt" --progress
+# rclone copy gcp-prod:swfscesd-glider-deployments-data-out/2026/calanus-20260824/processed-L1/calanus-20260824-rt-sci.nc "drive-smw:Data Shares/esd-glider-data-share/calanus-20260824/" --progress
+
 import logging
 
 # import numpy as np
@@ -6,8 +12,7 @@ from pathlib import Path
 
 from esdglider.slocum import pipeline, rt
 
-# import esdglider.profiles as prof
-from esdglider import gcp, paths, plots, qartod
+from esdglider import gcp, paths, plots, qartod, utils
 
 logger = logging.getLogger(__name__)
 
@@ -19,32 +24,16 @@ sci_use_m_depth = False # Use m_depth for science depth?
 prof_args = {}          # Named optional parameters for finding profiles
 
 ### Consistent variables
-# Define directories
 home = Path.home()
-mnt_path = home / "mnt-gcs"
-cac_path = home / "standard-glider-files" / "Cache"
-config_path = home / "glider-lab" / "deployment-configs"
-
-# Bucket names and paths
 logs_bucket_name = "swfscesd-glider-logs"
-data_in_bucket_name = "swfscesd-glider-deployments-data-in"
-data_out_bucket_name = "swfscesd-glider-deployments-data-out"
-
-logs_path = mnt_path / logs_bucket_name
-data_in_path = mnt_path / data_in_bucket_name
-data_out_path = mnt_path / data_out_bucket_name
-
-# Misc
-file_info = f"https://github.com/SWFSC/glider-lab: {Path(__file__).name}"
-log_file_name = f"{Path(__file__).stem}.log"
+logs_path = home / "mnt-gcs" / logs_bucket_name
+file_info, log_file_name = paths.get_file_info(Path(__file__))
 
 
 #------------------------------------------------------------------------------
 if __name__ == "__main__":
     gcp.gcs_mount_bucket(logs_bucket_name, logs_path, ro=False)
-    gcp.gcs_mount_bucket(data_in_bucket_name, data_in_path, ro=True)
-    gcp.gcs_mount_bucket(data_out_bucket_name, data_out_path, ro=False)
-
+    
     logging.basicConfig(
         filename=logs_path / log_file_name,
         filemode="w",
@@ -60,20 +49,20 @@ if __name__ == "__main__":
     glider_paths = paths.get_path_glider(
         deployment_name = deployment_name, 
         mode = mode, 
-        config_path = config_path, 
-        data_in_path = data_in_path, 
-        data_out_path = data_out_path, 
-        cac_path = cac_path, 
+        home_path = home,
     )
+    gcp.gcs_mount_bucket(paths.data_in_bucket_name, glider_paths["data_in_path"], ro=True)
+    gcp.gcs_mount_bucket(paths.data_out_bucket_name, glider_paths["data_out_path"], ro=False)
 
+    logger.info("Rsyncing nrt files from SFMC to GCP---------------------")
     rt.scrape_sfmc(
-        deployment_name, 
-        "swfscesd-glider-deployments-data-in", 
-        "/home/user/sfmc", 
-        "ggn-nmfs-swfscesd-prod-1", 
-        "sfmc-swoodman"
+        deployment_name=deployment_name, 
+        bucket_name=paths.data_in_bucket_name, 
+        sfmc_path=str(home / "sfmc"), 
+        cache_path=glider_paths["cacdir"], 
+        gcpproject_id="ggn-nmfs-swfscesd-prod-1", 
+        secret_id="sfmc-swoodman"
     )
-
 
     #--------------------------------------------------------------------------
     ### Timeseries and gridded netCDF generation
@@ -102,12 +91,12 @@ if __name__ == "__main__":
     #         {"time": slice("2026-02-01 09:05", "2026-02-01 09:16:10")}
     #     ] = 397
 
-        # pipeline.complete_profile_correction(
-        #     tsraw=tsraw,
-        #     tseng=xr.load_dataset(outname_dict_ts["outname_tseng"]),
-        #     tssci=xr.load_dataset(outname_dict_ts["outname_tssci"]),
-        #     glider_paths=glider_paths,
-        # )
+    #     pipeline.complete_profile_correction(
+    #         tsraw=tsraw,
+    #         tseng=xr.load_dataset(outname_dict_ts["outname_tseng"]),
+    #         tssci=xr.load_dataset(outname_dict_ts["outname_tssci"]),
+    #         glider_paths=glider_paths,
+    #     )
 
     # Create qc variables for science netCDF files, after corrections
     if write_nc:
@@ -128,28 +117,6 @@ if __name__ == "__main__":
 
 
     #--------------------------------------------------------------------------
-    # ### Ancillary data products
-    # tssci = xr.load_dataset(outname_dict["outname_tssci"])
-
-    # logger.info("Active Acoustics---------------------")
-    # aa_paths = paths.get_path_aa(
-    #     deployment_name, 
-    #     mode, 
-    #     aa_in_path=aa_in_path, 
-    #     data_out_path=data_out_path, 
-    # )
-    # aa.ancillary_echoview(tssci, aa_paths)
-    
-    # logger.info("Imagery---------------------")
-    # img_paths = paths.get_path_imagery(
-    #     deployment_name = deployment_name, 
-    #     imagery_in_path = imagery_in_path, 
-    #     imagery_meta_path = imagery_meta_path, 
-    #     data_out_path = data_out_path, 
-    # )
-    # imagery.imagery_timeseries(tssci, img_paths)
-
-    #--------------------------------------------------------------------------
     ### Plots
     logger.info("Generating plots---------------------")
     etopo_path = home / "ETOPO_2022_v1_15s_N45W135_erddap.nc"
@@ -161,13 +128,13 @@ if __name__ == "__main__":
     )
 
     #--------------------------------------------------------------------------
-    # ### Generate profile netCDF files for the DAC
-    # core.ngdac_profiles(
-    #     outname_dict["outname_tssci"], 
-    #     glider_paths['profdir'], 
-    #     glider_paths['deploymentyaml'],
-    #     force=True, 
-    # )
+    ### Generate profile netCDF files for the DAC
+    utils.create_ngdac_profiles(
+        inname=outname_dict["outname_tssci"],
+        outdir=glider_paths["ngdacdir"],
+        deploymentyaml=glider_paths["deploymentyaml"],
+        force=True,
+    )
 
     #--------------------------------------------------------------------------
     logger.info("Completed scheduled processing")

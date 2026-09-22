@@ -18,32 +18,15 @@ profile_args = {
 }
 
 ### Consistent variables
-# Define directories
 home = Path.home()
-mnt_path = home / "mnt-gcs"
-cac_path = home / "standard-glider-files" / "Cache"
-config_path = home / "glider-lab" / "deployment-configs"
-
-# Bucket names and paths
 logs_bucket_name = "swfscesd-glider-logs"
-data_in_bucket_name = "swfscesd-glider-deployments-data-in"
-data_out_bucket_name = "swfscesd-glider-deployments-data-out"
-
-logs_path = mnt_path / logs_bucket_name
-data_in_path = mnt_path / data_in_bucket_name
-data_out_path = mnt_path / data_out_bucket_name
-
-# Misc
-file_info = f"https://github.com/SWFSC/glider-lab: {Path(__file__).stem}"
-log_file_name = f"{Path(__file__).stem}.log"
+logs_path = home / "mnt-gcs" / logs_bucket_name
+file_info, log_file_name = paths.get_file_info(Path(__file__))
 
 
 #------------------------------------------------------------------------------
 if __name__ == "__main__":
     gcp.gcs_mount_bucket(logs_bucket_name, logs_path, ro=False)
-    gcp.gcs_mount_bucket(data_in_bucket_name, data_in_path, ro=True)
-    gcp.gcs_mount_bucket(data_out_bucket_name, data_out_path, ro=False)
-
     logging.basicConfig(
         filename=logs_path / log_file_name,
         filemode="w",
@@ -56,14 +39,9 @@ if __name__ == "__main__":
     print(f"Writing logs to {logs_path / log_file_name}")
 
     logger.info("Generating glider paths")
-    glider_paths = paths.get_path_glider(
-        deployment_name = deployment_name, 
-        mode = mode, 
-        config_path = config_path, 
-        data_in_path = data_in_path, 
-        data_out_path = data_out_path, 
-        cac_path = cac_path, 
-    )
+    glider_paths = paths.get_path_glider(deployment_name, mode, home_path=home)
+    gcp.gcs_mount_bucket(paths.data_in_bucket_name, glider_paths["data_in_path"], ro=True)
+    gcp.gcs_mount_bucket(paths.data_out_bucket_name, glider_paths["data_out_path"], ro=False)
 
     #--------------------------------------------------------------------------
     ### Timeseries and gridded netCDF generation
