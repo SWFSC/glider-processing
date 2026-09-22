@@ -5,7 +5,7 @@ from pathlib import Path
 import xarray as xr
 from esdglider.slocum import pipeline
 
-from esdglider import gcp, imagery, paths, plots, qartod
+from esdglider import gcp, imagery, paths, plots, qartod, utils
 
 logger = logging.getLogger(__name__)
 
@@ -20,36 +20,15 @@ prof_args = {
 }
 
 ### Consistent variables
-# Define directories
 home = Path.home()
-mnt_path = home / "mnt-gcs"
-cac_path = home / "standard-glider-files" / "Cache"
-config_path = home / "glider-lab" / "deployment-configs"
-
-# Bucket names and paths
 logs_bucket_name = "swfscesd-glider-logs"
-data_in_bucket_name = "swfscesd-glider-deployments-data-in"
-data_out_bucket_name = "swfscesd-glider-deployments-data-out"
-imagery_in_bucket_name = "swfscesd-glider-imagery-data-in"
-imagery_meta_bucket_name = "swfscesd-glider-imagery-metadata"
+logs_path = home / "mnt-gcs" / logs_bucket_name
+file_info, log_file_name = paths.get_file_info(Path(__file__))
 
-logs_path = mnt_path / logs_bucket_name
-data_in_path = mnt_path / data_in_bucket_name
-data_out_path = mnt_path / data_out_bucket_name
-imagery_in_path = mnt_path / imagery_in_bucket_name
-imagery_meta_path = mnt_path / imagery_meta_bucket_name
 
-# Misc
-file_info = f"https://github.com/SWFSC/glider-lab: {Path(__file__).name}"
-log_file_name = f"{deployment_name}-{mode}.log"
-
+#------------------------------------------------------------------------------
 if __name__ == "__main__":
     gcp.gcs_mount_bucket(logs_bucket_name, logs_path, ro=False)
-    gcp.gcs_mount_bucket(data_in_bucket_name, data_in_path, ro=True)
-    gcp.gcs_mount_bucket(data_out_bucket_name, data_out_path, ro=False)
-    # gcp.gcs_mount_bucket(imagery_in_bucket_name, imagery_in_path, ro=True)
-    # gcp.gcs_mount_bucket(imagery_meta_bucket_name, imagery_meta_path, ro=True)
-
     logging.basicConfig(
         filename=logs_path / log_file_name,
         filemode="w",
@@ -62,14 +41,15 @@ if __name__ == "__main__":
     print(f"Writing logs to {logs_path / log_file_name}")
 
     # Generate glider paths
+    logger.info("Generating glider paths")
     glider_paths = paths.get_path_glider(
         deployment_name = deployment_name, 
         mode = mode, 
-        config_path = config_path, 
-        data_in_path = data_in_path, 
-        data_out_path = data_out_path, 
-        cache_path = cac_path, 
+        home_path = home,
     )
+    gcp.gcs_mount_bucket(paths.data_in_bucket_name, glider_paths["data_in_path"], ro=True)
+    gcp.gcs_mount_bucket(paths.data_out_bucket_name, glider_paths["data_out_path"], ro=False)
+
 
     #--------------------------------------------------------------------------
     ### Timeseries and gridded netCDF generation
@@ -102,26 +82,6 @@ if __name__ == "__main__":
             {"time": slice("2026-01-25 01:51", "2026-01-25 01:55")}
         ] = 182
         
-        # # Finish raw dataset work
-        # prof_summ = utils.calc_profile_summary(tsraw, "depth_measured")
-        # prof_summ.to_csv(glider_paths["profsummpath"], index=False)
-        # utils.check_profiles(prof_summ)
-        # tsraw.to_netcdf(
-        #     outname_dict_ts["outname_tsraw"], 
-        #     encoding={'time': pipeline.time_encoding}
-        # )
-
-        # # Apply new profiles to sci and eng
-        # tseng = utils.join_profiles(tseng, prof_summ, **prof_kwargs)
-        # tssci = utils.join_profiles(tssci, prof_summ, **prof_kwargs)
-        # tseng.to_netcdf(
-        #     outname_dict_ts["outname_tseng"], 
-        #     encoding={'time': pipeline.time_encoding}
-        # )
-        # tssci.to_netcdf(
-        #     outname_dict_ts["outname_tssci"], 
-        #     encoding={'time': pipeline.time_encoding}
-        # )
         pipeline.complete_profile_correction(
             tsraw=tsraw,
             tseng=xr.load_dataset(outname_dict_ts["outname_tseng"]),
@@ -140,7 +100,7 @@ if __name__ == "__main__":
         )
 
 
-    # Generate gridded netCDF files
+    logger.info("Generating gridded netCDF files---------------------")
     outname_dict_gr = pipeline.generate_gridded(
         glider_paths=glider_paths,
         write_gridded=write_nc,
@@ -148,20 +108,23 @@ if __name__ == "__main__":
 
     outname_dict = outname_dict_ts | outname_dict_gr
 
-    ### Sensor-specific processing
+    #--------------------------------------------------------------------------
+    ### Ancillary data products
     tssci = xr.load_dataset(outname_dict["outname_tssci"])
-
-    # Imagery
-    img_paths = paths.get_path_imagery(
-        deployment_name = deployment_name, 
-        imagery_in_path = imagery_in_path, 
-        imagery_meta_path = imagery_meta_path, 
-        data_out_path = data_out_path, 
-    )
+    
+    logger.info("Imagery---------------------")
+    img_paths = paths.get_path_imagery(deployment_name, home_path=home)
+    gcp.gcs_mount_bucket(paths.imagery_meta_bucket_name, img_paths["imagery_meta_path"], ro=True)
     imagery.imagery_timeseries(tssci, img_paths)
 
+    #--------------------------------------------------------------------------
     ### Plots
-    plots.esd_all_plots(outname_dict, crs=None, base_path=glider_paths["plotdir"])
+    logger.info("Generating plots---------------------")
+    plots.esd_all_plots(
+        outname_dict, 
+        crs=None, 
+        base_path=glider_paths["plotdir"], 
+    )
     plots.sci_surface_map_loop(
         xr.load_dataset(outname_dict["outname_gr5m"]),
         crs="Mercator",
@@ -170,12 +133,14 @@ if __name__ == "__main__":
         figsize_y=8.5,
     )
 
+    #--------------------------------------------------------------------------
     ### Generate profile netCDF files for the DAC
-    # glider.ngdac_profiles(
-    #     outname_dict["outname_tssci"], 
-    #     glider_paths['profdir'], 
-    #     glider_paths['deploymentyaml'],
-    #     force=True, 
-    # )
+    utils.create_ngdac_profiles(
+        inname=outname_dict["outname_tssci"],
+        outdir=glider_paths["ngdacdir"],
+        deploymentyaml=glider_paths["deploymentyaml"],
+        force=True,
+    )
 
+    #--------------------------------------------------------------------------
     logger.info("Completed scheduled processing")

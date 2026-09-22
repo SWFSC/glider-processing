@@ -1,12 +1,12 @@
 import logging
 from pathlib import Path
 
+# import esdglider.profiles as prof
 # import numpy as np
 import xarray as xr
+from esdglider.slocum import pipeline, rt
 
-from esdglider import aa, gcp, imagery, paths, plots, utils
-from esdglider.slocum import core, pipeline
-import esdglider.profiles as prof
+from esdglider import gcp, imagery, paths, plots, qartod, utils
 
 logger = logging.getLogger(__name__)
 
@@ -23,7 +23,7 @@ prof_args = {
 # Change for local paths
 home = Path("D:/esd data structure/")
 # mnt_path = home / "gcs-mnt"
-cac_path = "D:/esd data structure/cache/"
+cache_path = "D:/esd data structure/cache/"
 config_path = "deployment-configs/"
 
 # Bucket names and paths
@@ -38,18 +38,12 @@ logs_path = Path(logs_bucket_name)
 data_in_path = Path(data_in_bucket_name)
 data_out_path = Path(data_out_bucket_name)
 
-# Misc
-file_info = f"https://github.com/SWFSC/glider-lab: {Path(__file__).name}"
-log_file_name = f"capex987-20260128-delayed.log"
+file_info, log_file_name = paths.get_file_info(Path(__file__))
+
 
 #------------------------------------------------------------------------------
 if __name__ == "__main__":
-    # gcp.gcs_mount_bucket(logs_bucket_name, logs_path, ro=False)
-    # gcp.gcs_mount_bucket(data_in_bucket_name, data_in_path, ro=True)
-    # gcp.gcs_mount_bucket(data_out_bucket_name, data_out_path, ro=False)
-    # gcp.gcs_mount_bucket(aa_in_bucket_name, aa_in_path, ro=True)
-    # gcp.gcs_mount_bucket(imagery_in_bucket_name, imagery_in_path, ro=True)
-    # gcp.gcs_mount_bucket(imagery_meta_bucket_name, imagery_meta_path, ro=True)
+    gcp.gcs_mount_bucket(logs_bucket_name, logs_path, ro=False)
 
     logging.basicConfig(
         filename=logs_path / log_file_name,
@@ -61,15 +55,16 @@ if __name__ == "__main__":
     logging.captureWarnings(True)
 #    logger.info("Beginning scheduled processing for %s", file_info)
     logger.info("Beginning scheduled processing for %s", deployment_name)
+    print(f"Writing logs to {logs_path / log_file_name}")
 
-    logger.info("Generating glider paths")
+    logger.info("Generating glider paths---------------------")
     glider_paths = paths.get_path_glider(
         deployment_name = deployment_name, 
         mode = mode, 
         config_path = config_path, 
         data_in_path = data_in_path, 
         data_out_path = data_out_path, 
-        cache_path = cac_path, 
+        cache_path = cache_path, 
     )
 
 
@@ -126,7 +121,7 @@ if __name__ == "__main__":
             tseng,
             tssci,
             glider_paths,
-            prof_args=prof_args, 
+            # prof_args=prof_args, 
         )        
         # prof_summ = prof.calc_profile_summary(tsraw, "depth_measured")
         # prof_summ.to_csv(glider_paths["profsummpath"], index=False)
@@ -249,13 +244,12 @@ if __name__ == "__main__":
 
     #--------------------------------------------------------------------------
     ### Generate profile netCDF files for the DAC
-    # glider.ngdac_profiles(
-    core.ngdac_profiles(
-        outname_dict["outname_tssci"], 
-        glider_paths['profdir'], 
-        glider_paths['deploymentyaml'],
-        force=True, 
-    )
+    # utils.create_ngdac_profiles(
+    #     inname=outname_dict["outname_tssci"],
+    #     outdir=glider_paths["ngdacdir"],
+    #     deploymentyaml=glider_paths["deploymentyaml"],
+    #     force=True,
+    # )
 
     #--------------------------------------------------------------------------
     logger.info("Completed scheduled processing")

@@ -6,7 +6,7 @@ from pathlib import Path
 
 from esdglider.slocum import pipeline
 
-from esdglider import gcp, paths, plots, qartod
+from esdglider import gcp, paths, plots, qartod, utils
 
 logger = logging.getLogger(__name__)
 
