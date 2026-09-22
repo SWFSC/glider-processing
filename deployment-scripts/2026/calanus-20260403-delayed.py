@@ -4,7 +4,7 @@ from pathlib import Path
 import xarray as xr
 from esdglider.slocum import pipeline
 
-from esdglider import gcp, imagery, paths, plots, qartod
+from esdglider import gcp, imagery, paths, plots, qartod, utils
 
 logger = logging.getLogger(__name__)
 
@@ -111,12 +111,6 @@ if __name__ == "__main__":
     tssci = xr.load_dataset(outname_dict["outname_tssci"])
     
     logger.info("Imagery---------------------")
-    # img_paths = paths.get_path_imagery(
-    #     deployment_name = deployment_name, 
-    #     imagery_in_path = imagery_in_path, 
-    #     imagery_meta_path = imagery_meta_path, 
-    #     data_out_path = data_out_path, 
-    # )    
     img_paths = paths.get_path_imagery(deployment_name, home_path=home)
     gcp.gcs_mount_bucket(paths.imagery_meta_bucket_name, img_paths["imagery_meta_path"], ro=True)
     imagery.imagery_timeseries(tssci, img_paths)
@@ -133,13 +127,13 @@ if __name__ == "__main__":
     )
 
     #--------------------------------------------------------------------------
-    # ### Generate profile netCDF files for the DAC
-    # glider.ngdac_profiles(
-    #     outname_dict["outname_tssci"], 
-    #     glider_paths['profdir'], 
-    #     glider_paths['deploymentyaml'],
-    #     force=True, 
-    # )
+    ### Generate profile netCDF files for the DAC
+    utils.create_ngdac_profiles(
+        inname=outname_dict["outname_tssci"],
+        outdir=glider_paths["ngdacdir"],
+        deploymentyaml=glider_paths["deploymentyaml"],
+        force=True,
+    )
 
     #--------------------------------------------------------------------------
     logger.info("Completed scheduled processing")

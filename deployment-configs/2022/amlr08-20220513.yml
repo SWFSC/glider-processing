@@ -42,7 +42,7 @@ metadata:
   sea_name: Coastal Waters of California
   source: Observational data from a profiling glider
   standard_name_vocabulary: CF Standard Name Table v72
-  start_date: 2022-05-13 18:56:55
+  start_date: 20220513T185655
   summary: This was a test deployment by the NOAA SWFSC Ecosystem Science Division
     to test a new WASSOC shadowgraph and Nortek compact echosounder.
   transmission_system: IRIDIUM

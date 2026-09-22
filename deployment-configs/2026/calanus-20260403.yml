@@ -42,7 +42,7 @@ metadata:
   sea_name: Coastal Waters of California
   source: Observational data from a profiling glider
   standard_name_vocabulary: CF Standard Name Table v72
-  start_date: 2026-04-03 17:36
+  start_date: 20260403T173632
   summary: <summary>
   transmission_system: IRIDIUM
   wmo_id: ' '
