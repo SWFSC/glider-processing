@@ -4,9 +4,9 @@ metadata:
     in collaboration with Teledyne Webb Research and JASCO Applied Sciences.
   comment: Underwater Glider Challange 2026 (aka Glider Rodeo)
   contributor_name: Heidi Taylor, Jennifer Walsh, Anthony Cossio, Tegan Murray, Kourtney
-    Burger, Samuel Woodman
+    Burger, Cara Wilson, Samuel Woodman
   contributor_role: Principal Investigator, Glider Pilot, Glider Pilot, Glider Pilot,
-    Glider Pilot, Data Manager
+    Glider Pilot, Glider Pilot, Data Manager
   creator_email: nmfs.swfsc.esd-gliders@noaa.gov
   creator_name: Kourtney Burger
   creator_url: https://www.fisheries.noaa.gov/about/southwest-fisheries-science-center
@@ -34,7 +34,7 @@ metadata:
   os_version: '11.07'
   platform_type: Slocum Glider
   project: GLIDERRODEO
-  publisher_email: sam.woodman@noaa.gov
+  publisher_email: nmfs.swfsc.esd-gliders@noaa.gov
   publisher_name: Sam Woodman
   publisher_url: https://www.fisheries.noaa.gov/about/southwest-fisheries-science-center
   references: https://swfsc.github.io/glider-lab-manual/, https://github.com/c-proof/pyglider,

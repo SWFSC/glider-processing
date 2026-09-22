@@ -35,7 +35,7 @@ metadata:
   os_version: '11.04'
   platform_type: Slocum Glider
   project: SANDIEGO
-  publisher_email: sam.woodman@noaa.gov
+  publisher_email: nmfs.swfsc.esd-gliders@noaa.gov
   publisher_name: Sam Woodman
   publisher_url: https://www.fisheries.noaa.gov/about/southwest-fisheries-science-center
   references: https://swfsc.github.io/glider-lab-manual/, https://github.com/c-proof/pyglider,
