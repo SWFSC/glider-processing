@@ -6,7 +6,7 @@ import numpy as np
 import xarray as xr
 from esdglider.slocum import pipeline
 
-from esdglider import gcp, paths, plots, qartod, utils
+from esdglider import gcp, paths, plots, qartod
 
 logger = logging.getLogger(__name__)
 
@@ -138,7 +138,7 @@ if __name__ == "__main__":
 
     #--------------------------------------------------------------------------
     ### Generate profile netCDF files for the DAC
-    utils.create_ngdac_profiles(
+    pipeline.create_ngdac_profiles(
         inname=outname_dict["outname_tssci"],
         outdir=glider_paths["ngdacdir"],
         deploymentyaml=glider_paths["deploymentyaml"],
