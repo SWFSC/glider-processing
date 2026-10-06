@@ -3,9 +3,9 @@ metadata:
   acknowledgment: This work was supported by funding from NOAA.
   comment: El Nino 2026
   contributor_name: Heidi Taylor, Jennifer Walsh, Anthony Cossio, Tegan Murray, Kourtney
-    Burger, Cara Wilson, Samuel Woodman
+    Burger, Cara Wilson, Jacob Partida, Samuel Woodman
   contributor_role: Principal Investigator, Glider Pilot, Glider Pilot, Glider Pilot,
-    Glider Pilot, Glider Pilot, Data Manager
+    Glider Pilot, Glider Pilot, Glider Pilot, Data Manager
   creator_email: nmfs.swfsc.esd-gliders@noaa.gov
   creator_name: NOAA SWFSC Ecosystem Science Division Glider Team
   creator_url: https://www.fisheries.noaa.gov/about/southwest-fisheries-science-center
@@ -44,6 +44,7 @@ metadata:
   source: Observational data from a profiling glider
   standard_name_vocabulary: CF Standard Name Table v72
   start_date: 2026-08-24 18:47
+#   start_date: 2026-09-18 18:08 # when solocam.ini was corrected 
   summary: "This glider was deployed as the first of several month long deployments\
     \ as part of a targeted sampling program to monitor the evolution and ecosystem\
     \ impacts of a predicted \"very strong\" El Ni\xF1o. It was deployed along CalCOFI\
