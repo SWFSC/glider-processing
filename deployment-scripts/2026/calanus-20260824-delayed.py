@@ -13,6 +13,7 @@ deployment_name = "calanus-20260824"
 mode = "delayed"        # "delayed" or "rt"
 write_nc = True         # Write NC files?
 profile_args = {
+    "stall": 2, 
 }
 
 ### Consistent variables
@@ -58,13 +59,12 @@ if __name__ == "__main__":
         write_eng=write_nc,
         write_sci=write_nc,
         file_info=file_info,
-        binary_search="*.[de]cd", 
+        binary_search="*.[de]bd", 
         prof_args = profile_args, 
     )
 
-    # Recalculate flbbcd values and correct cdom, if necessary
     if write_nc:
-        logger.info("Correcting data---------------------")
+        # logger.info("Correcting data---------------------")
         # pipeline.correct_cdom_raw_sci(glider_paths=glider_paths)
 
         # # Correct profiles, and make other adjustments to netCDF files, if necessary
