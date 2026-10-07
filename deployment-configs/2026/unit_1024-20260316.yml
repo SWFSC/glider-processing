@@ -1,7 +1,8 @@
 metadata:
   Metadata_Conventions: Unidata Dataset Discovery v1.0, COARDS, CF-1.8
   acknowledgment: This work was supported by funding from NOAA.
-  comment: glider was recovered early due to an aft leak
+  comment: glider was recovered early due to an aft leak. 
+    Glider was swapped out with glider 'amlr08' at the time of recovery on 3/21/2026.
   contributor_name: Heidi Taylor, Jennifer Walsh, Anthony Cossio, Tegan Murray, Kourtney
     Burger, Cara Wilson, Samuel Woodman
   contributor_role: Principal Investigator, Glider Pilot, Glider Pilot, Glider Pilot,
@@ -17,8 +18,7 @@ metadata:
   glider_model: Teledyne Webb Research Slocum G3 glider
   glider_name: unit_1024
   glider_serial: '1024'
-  institution: NOAA National Marine Fisheries Service Southwest Fisheries Science
-    Center
+  institution: NOAA National Marine Fisheries Service Southwest Fisheries Science Center
   keywords: AUVS > Autonomous Underwater Vehicles, Earth Science > Oceans > Ocean
     Pressure > Water Pressure, Earth Science > Oceans > Ocean Temperature > Water
     Temperature, Earth Science > Oceans > Salinity/Density > Conductivity, Earth Science
@@ -28,15 +28,15 @@ metadata:
   keywords_vocabulary: GCMD Science Keywords
   license: These data were produced by NOAA and are not subject to copyright protection
     in the United States. NOAA waives any potential copyright and related rights in
-    thse data worldwide through the Creative Commons Zero 1.0 Universal Public Domain
+    these data worldwide through the Creative Commons Zero 1.0 Universal Public Domain
     Dedication (CC0-1.0, https://creativecommons.org/publicdomain/zero/1.0/).
   metadata_link: https://swfsc.github.io/glider-lab-manual/
   naming_authority: gov.noaa.fisheries
   os_version: '11.06'
   platform_type: Slocum Glider
-  project: SANDIEGO
+  project: CALCOFI
   publisher_email: nmfs.swfsc.esd-gliders@noaa.gov
-  publisher_name: Sam Woodman
+  publisher_name: NOAA SWFSC Ecosystem Science Division Glider Team
   publisher_url: https://www.fisheries.noaa.gov/about/southwest-fisheries-science-center
   references: https://swfsc.github.io/glider-lab-manual/, https://github.com/c-proof/pyglider,
     https://github.com/SWFSC/esdglider
@@ -44,10 +44,13 @@ metadata:
   source: Observational data from a profiling glider
   standard_name_vocabulary: CF Standard Name Table v72
   start_date: '2026-03-16 17:59:00'
-  summary: These data are part of the NOAA Ecosystem Science Division.The main objective
-    of this deployment was to use a new Shadowgraph model (SG-V3-02, Williamson &
+  summary: These data are part of the NOAA Ecosystem Science Division CalCOFI Operation. 
+    The main objective of this deployment 
+    was to use a new Shadowgraph model (SG-V3-02, Williamson &
     Associates (Wassoc)) to obtain imagery of the plankton community in the Southern
-    California Bight off San Diego, CA. Other sensors included a CTD, an optical sensor
+    California Bight off San Diego, CA, and to overlap in time and 
+    space with vessel sampling to enable data comparisons. 
+    Other sensors included a CTD, an optical sensor
     (ECO Puck) for chlorophyll, backscatter, and colored dissolved organic matter
     measurements, and an oxygen sensor.
   transmission_system: IRIDIUM

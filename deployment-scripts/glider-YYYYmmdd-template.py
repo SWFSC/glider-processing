@@ -74,9 +74,9 @@ if __name__ == "__main__":
         prof_args=prof_args, 
     )
 
-    # # Recalculate flbbcd values and correct cdom, if necessary
     # if write_nc:
     #     logger.info("Correcting data---------------------")
+    #     # Recalculate flbbcd values and correct cdom, if necessary
     #     pipeline.correct_flbbcd_raw_sci(glider_paths=glider_paths)
     #     pipeline.correct_cdom_raw_sci(glider_paths=glider_paths)
 
@@ -117,6 +117,15 @@ if __name__ == "__main__":
     # outname_dict = outname_dict_ts | outname_dict_gr
 
 
+    # --------------------------------------------------------------------------
+    # ### Generate profile netCDF files for the DAC
+    # pipeline.create_ngdac_profiles(
+    #     inname=outname_dict["outname_tssci"],
+    #     outdir=glider_paths["ngdacdir"],
+    #     deploymentyaml=glider_paths["deploymentyaml"],
+    #     force=True,
+    # )
+
     #--------------------------------------------------------------------------
     # ### Ancillary data products
     # tssci = xr.load_dataset(outname_dict["outname_tssci"])
@@ -152,15 +161,6 @@ if __name__ == "__main__":
     #     base_path=glider_paths["plotdir"],
     #     figsize_x=11,
     #     figsize_y=8.5,
-    # )
-
-    # --------------------------------------------------------------------------
-    # ### Generate profile netCDF files for the DAC
-    # pipeline.create_ngdac_profiles(
-    #     inname=outname_dict["outname_tssci"],
-    #     outdir=glider_paths["ngdacdir"],
-    #     deploymentyaml=glider_paths["deploymentyaml"],
-    #     force=True,
     # )
 
     #--------------------------------------------------------------------------

@@ -44,9 +44,9 @@ metadata:
   source: Observational data from a profiling glider
   standard_name_vocabulary: CF Standard Name Table v72
   start_date: '2026-03-09 18:53:00'
-  summary: These data are part of the NOAA Ecosystem Science Division.The main objective
-    of this deployment was to test a new Shadowgraph model (SG-V3-02, Williamson &
-    Associates (Wassoc)) to obtain imagery of the plankton community in the Southern
+  summary: The main objective of this deployment was a 24 hour test
+    of a new Shadowgraph model (SG-V3-02, Williamson & Associates (Wassoc)) 
+    to obtain imagery of the plankton community in the Southern
     California Bight off San Diego, CA. Other sensors included a CTD, an optical sensor
     (ECO Puck) for chlorophyll, backscatter, and colored dissolved organic matter
     measurements, and an oxygen sensor.

@@ -1,7 +1,11 @@
 metadata:
   Metadata_Conventions: Unidata Dataset Discovery v1.0, COARDS, CF-1.8
-  acknowledgment: This work was supported by funding from NOAA.
-  comment: ' '
+  acknowledgement: This work was supported by funding from NOAA.
+  comment: 'Glider was deployed on 3/21/2026 with a shadowgraph camera in need of 
+    immediate mainenance to prevent damage. 
+    On 3/27/2026, glider was recovered briefly, the camera was swapped, 
+    and the glider was redeployed. 
+    Deployment ID for first 6 days of deployment: amlr08-20260321.'
   contributor_name: Heidi Taylor, Jennifer Walsh, Anthony Cossio, Tegan Murray, Kourtney
     Burger, Cara Wilson, Samuel Woodman
   contributor_role: Principal Investigator, Glider Pilot, Glider Pilot, Glider Pilot,
@@ -28,7 +32,7 @@ metadata:
   keywords_vocabulary: GCMD Science Keywords
   license: These data were produced by NOAA and are not subject to copyright protection
     in the United States. NOAA waives any potential copyright and related rights in
-    thse data worldwide through the Creative Commons Zero 1.0 Universal Public Domain
+    these data worldwide through the Creative Commons Zero 1.0 Universal Public Domain
     Dedication (CC0-1.0, https://creativecommons.org/publicdomain/zero/1.0/).
   metadata_link: https://swfsc.github.io/glider-lab-manual/
   naming_authority: gov.noaa.fisheries
@@ -47,7 +51,8 @@ metadata:
   summary: These data are part of the NOAA Ecosystem Science Division CalCOFI Operation.
     The main objective of this deployment was to use a new Shadowgraph model (SG-V3-02,
     Williamson & Associates (Wassoc)) to obtain imagery of the plankton community
-    in the Southern California Bight off San Diego, CA. Other sensors included a CTD,
+    in the Southern California Bight off San Diego, CA, and to overlap in time and 
+    space with vessel sampling to enable data comparisons. Other sensors included a CTD,
     an optical sensor (ECO Puck) for chlorophyll, backscatter, and colored dissolved
     organic matter measurements, and an oxygen sensor.
   transmission_system: IRIDIUM

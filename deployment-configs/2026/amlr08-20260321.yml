@@ -1,8 +1,8 @@
 metadata:
   Metadata_Conventions: Unidata Dataset Discovery v1.0, COARDS, CF-1.8
-  acknowledgment: This work was supported by funding from NOAA.
+  acknowledgement: This work was supported by funding from NOAA.
   comment: 'Shadowgraph damaged during deployment, same glider was redeployed with
-    new shadowgraph on 3/27/2026 (deployment ID: amlr08-20260327)'
+    new shadowgraph on 3/27/2026 (deployment name: amlr08-20260327)'
   contributor_name: Heidi Taylor, Jennifer Walsh, Anthony Cossio, Tegan Murray, Kourtney
     Burger, Cara Wilson, Samuel Woodman
   contributor_role: Principal Investigator, Glider Pilot, Glider Pilot, Glider Pilot,
@@ -48,7 +48,8 @@ metadata:
   summary: These data are part of the NOAA Ecosystem Science Division CalCOFI Operation.
     The main objective of this deployment was to test a new Shadowgraph model (SG-V3-02,
     Williamson & Associates (Wassoc)) to obtain imagery of the plankton community
-    in the Southern California Bight off San Diego, CA. Other sensors included a CTD,
+    in the Southern California Bight off San Diego, CA, and to overlap in time and 
+    space with vessel sampling to enable data comparisons. Other sensors included a CTD,
     an optical sensor (ECO Puck) for chlorophyll, backscatter, and colored dissolved
     organic matter measurements, and an oxygen sensor.
   transmission_system: IRIDIUM
