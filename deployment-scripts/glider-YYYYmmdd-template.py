@@ -74,38 +74,44 @@ if __name__ == "__main__":
         prof_args=prof_args, 
     )
 
-    # if write_nc:
+    # if write_nc:      #IF NECESSARY
     #     logger.info("Correcting data---------------------")
-    #     # Recalculate flbbcd values and correct cdom, if necessary
+    #     # Recalculate flbbcd values and correct cdom
     #     pipeline.correct_flbbcd_raw_sci(glider_paths=glider_paths)
     #     pipeline.correct_cdom_raw_sci(glider_paths=glider_paths)
 
-    # # Correct profiles, and make other adjustments to netCDF files, if necessary
-    # if write_nc:
+    # if write_nc:      #IF NECESSARY
     #     logger.info("Adjusting datasets, after review---------------------")
+    #     # Correct profile indices, and make other adjustments to netCDF files
     #     tsraw = xr.load_dataset(outname_dict_ts["outname_tsraw"])
-
     #     # Adjust profile index
     #     logger.info("Correcting profile_index for raw, eng, and sci datasets")
     #     tsraw["profile_index"].loc[{"time": "2024-11-13 15:14:59"}] = 590.5
     #     tsraw["profile_index"].loc[
     #         {"time": slice("2026-02-01 09:05", "2026-02-01 09:16:10")}
     #     ] = 397
+    #     pipeline.complete_profile_correction(
+    #         tsraw=tsraw,
+    #         tseng=xr.load_dataset(outname_dict_ts["outname_tseng"]),
+    #         tssci=xr.load_dataset(outname_dict_ts["outname_tssci"]),
+    #         glider_paths=glider_paths,
+    #     )
 
-        # pipeline.complete_profile_correction(
-        #     tsraw=tsraw,
-        #     tseng=xr.load_dataset(outname_dict_ts["outname_tseng"]),
-        #     tssci=xr.load_dataset(outname_dict_ts["outname_tssci"]),
-        #     glider_paths=glider_paths,
-        # )
-
-    # # Create qc variables for science netCDF files, after corrections
+    # # Using science netCDF files, after corrections:
     # if write_nc:
     #     logger.info("Generating qc flags---------------------")
     #     qartod.run_qartod_qc(
     #         input_file=outname_dict_ts["outname_tssci"],
     #         output_file=outname_dict_ts["outname_tssci"],
     #         overwrite_qc=True
+    #     )
+    
+    #     logger.info("Generating profile netCDF files---------------------")
+    #     pipeline.create_ngdac_profiles(
+    #         inname=outname_dict_ts["outname_tssci"],
+    #         outdir=glider_paths["ngdacdir"],
+    #         deploymentyaml=glider_paths["deploymentyaml"],
+    #         force=True,
     #     )
 
     # logger.info("Generating gridded netCDF files---------------------")
@@ -115,16 +121,6 @@ if __name__ == "__main__":
     # )
 
     # outname_dict = outname_dict_ts | outname_dict_gr
-
-
-    # --------------------------------------------------------------------------
-    # ### Generate profile netCDF files for the DAC
-    # pipeline.create_ngdac_profiles(
-    #     inname=outname_dict["outname_tssci"],
-    #     outdir=glider_paths["ngdacdir"],
-    #     deploymentyaml=glider_paths["deploymentyaml"],
-    #     force=True,
-    # )
 
     #--------------------------------------------------------------------------
     # ### Ancillary data products
