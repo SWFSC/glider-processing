@@ -88,12 +88,21 @@ if __name__ == "__main__":
             glider_paths=glider_paths,
         )
 
-        # Create qc variables for science netCDF files, after corrections
+    # Using science netCDF files, after corrections:
+    if write_nc:
         logger.info("Generating qc flags---------------------")
         qartod.run_qartod_qc(
             input_file=outname_dict_ts["outname_tssci"],
             output_file=outname_dict_ts["outname_tssci"],
             overwrite_qc=True
+        )
+    
+        logger.info("Generating profile netCDF files---------------------")
+        pipeline.create_ngdac_profiles(
+            inname=outname_dict_ts["outname_tssci"],
+            outdir=glider_paths["ngdacdir"],
+            deploymentyaml=glider_paths["deploymentyaml"],
+            force=True,
         )
 
 
@@ -124,15 +133,6 @@ if __name__ == "__main__":
         crs="Mercator",
         base_path=glider_paths["plotdir"],
         bar_file=str(etopo_path),
-    )
-
-    #--------------------------------------------------------------------------
-    ### Generate profile netCDF files for the DAC
-    pipeline.create_ngdac_profiles(
-        inname=outname_dict["outname_tssci"],
-        outdir=glider_paths["ngdacdir"],
-        deploymentyaml=glider_paths["deploymentyaml"],
-        force=True,
     )
 
     #--------------------------------------------------------------------------

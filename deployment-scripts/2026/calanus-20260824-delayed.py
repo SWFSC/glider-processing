@@ -4,7 +4,7 @@ from pathlib import Path
 import xarray as xr
 from esdglider.slocum import pipeline
 
-from esdglider import gcp, imagery, paths, plots, qartod, utils
+from esdglider import gcp, imagery, paths, plots, qartod
 
 logger = logging.getLogger(__name__)
 
@@ -63,38 +63,22 @@ if __name__ == "__main__":
         prof_args = profile_args, 
     )
 
+    # Using science netCDF files, after corrections:
     if write_nc:
-        # logger.info("Correcting data---------------------")
-        # pipeline.correct_cdom_raw_sci(glider_paths=glider_paths)
-
-        # # Correct profiles, and make other adjustments to netCDF files, if necessary
-        # logger.info("Adjusting datasets, after review---------------------")
-        # tsraw = xr.load_dataset(outname_dict_ts["outname_tsraw"])
-        # tseng = xr.load_dataset(outname_dict_ts["outname_tseng"])
-        # tssci = xr.load_dataset(outname_dict_ts["outname_tssci"])
-
-        # # Adjust profile index
-        # logger.info("Correcting profile_index for raw, eng, and sci datasets")
-        # # tssci["profile_index"].loc[{"time": "2024-11-13 15:14:59"}] = 590.5
-        # tsraw["profile_index"].loc[
-        #     {"time": slice("2026-04-26 06:47", "2026-04-26 07:20")}
-        # ] = 578.0
-
-        # pipeline.complete_profile_correction(
-        #     tsraw,
-        #     tseng,
-        #     tssci,
-        #     glider_paths=glider_paths,
-        # )
-
-        # Create qc variables for science netCDF files, after corrections
         logger.info("Generating qc flags---------------------")
         qartod.run_qartod_qc(
             input_file=outname_dict_ts["outname_tssci"],
             output_file=outname_dict_ts["outname_tssci"],
             overwrite_qc=True
         )
-
+    
+        logger.info("Generating profile netCDF files---------------------")
+        pipeline.create_ngdac_profiles(
+            inname=outname_dict_ts["outname_tssci"],
+            outdir=glider_paths["ngdacdir"],
+            deploymentyaml=glider_paths["deploymentyaml"],
+            force=True,
+        )
 
     logger.info("Generating gridded netCDF files---------------------")
     outname_dict_gr = pipeline.generate_gridded(
@@ -114,6 +98,7 @@ if __name__ == "__main__":
     gcp.gcs_mount_bucket(paths.imagery_meta_bucket_name, img_paths["imagery_meta_path"], ro=True)
     imagery.imagery_timeseries(tssci, img_paths)
 
+
     #--------------------------------------------------------------------------
     ### Plots
     logger.info("Generating plots---------------------")
@@ -123,15 +108,6 @@ if __name__ == "__main__":
         crs="Mercator",
         base_path=glider_paths["plotdir"],
         bar_file=str(etopo_path),
-    )
-
-    #--------------------------------------------------------------------------
-    ### Generate profile netCDF files for the DAC
-    pipeline.create_ngdac_profiles(
-        inname=outname_dict["outname_tssci"],
-        outdir=glider_paths["ngdacdir"],
-        deploymentyaml=glider_paths["deploymentyaml"],
-        force=True,
     )
 
     #--------------------------------------------------------------------------

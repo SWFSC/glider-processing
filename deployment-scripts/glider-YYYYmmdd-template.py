@@ -122,6 +122,7 @@ if __name__ == "__main__":
 
     # outname_dict = outname_dict_ts | outname_dict_gr
 
+
     #--------------------------------------------------------------------------
     # ### Ancillary data products
     # tssci = xr.load_dataset(outname_dict["outname_tssci"])
@@ -134,6 +135,7 @@ if __name__ == "__main__":
     # img_paths = paths.get_path_imagery(deployment_name, home_path=home)
     # gcp.gcs_mount_bucket(paths.imagery_meta_bucket_name, img_paths["imagery_meta_path"], ro=True)
     # imagery.imagery_timeseries(tssci, img_paths)
+
 
     #--------------------------------------------------------------------------
     # ### Plots
