@@ -1,6 +1,5 @@
 metadata:
-  Metadata_Conventions: Unidata Dataset Discovery v1.0, COARDS, CF-1.8
-  acknowledgment: This work was supported by funding from NOAA.
+  acknowledgement: This work was supported by funding from NOAA.
   comment: This glider leaked from the aft section approximately 36 hours after deployment
     and was recovered approximately 48 hours after deployment.
   contributor_name: Christian Reiss, George Watters, Anthony Cossio, Jennifer Walsh,
@@ -8,11 +7,9 @@ metadata:
   contributor_role: Principal Investigator, Principal Investigator, Glider Pilot,
     Glider Pilot, Glider Pilot, Glider Pilot, Data Manager
   creator_email: nmfs.swfsc.esd-gliders@noaa.gov
-  creator_name: Christian Reiss
+  creator_name: NOAA SWFSC Ecosystem Science Division Glider Team
   creator_url: https://www.fisheries.noaa.gov/about/southwest-fisheries-science-center
   deployment_name: unit_1024-20250224
-  disclaimer: This data may be redistributed and used without restriction. Data provided
-    as is with no expressed or implied assurance of quality assurance or quality control
   format_version: IOOS_Glider_NetCDF_v2.0.nc
   glider_instrument_name: slocum
   glider_model: Teledyne Webb Research Slocum G3 glider
@@ -29,7 +26,7 @@ metadata:
   keywords_vocabulary: GCMD Science Keywords
   license: These data were produced by NOAA and are not subject to copyright protection
     in the United States. NOAA waives any potential copyright and related rights in
-    thse data worldwide through the Creative Commons Zero 1.0 Universal Public Domain
+    these data worldwide through the Creative Commons Zero 1.0 Universal Public Domain
     Dedication (CC0-1.0, https://creativecommons.org/publicdomain/zero/1.0/).
   metadata_link: https://swfsc.github.io/glider-lab-manual/
   naming_authority: gov.noaa.fisheries
@@ -37,13 +34,12 @@ metadata:
   platform_type: Slocum Glider
   project: SANDIEGO
   publisher_email: nmfs.swfsc.esd-gliders@noaa.gov
-  publisher_name: Sam Woodman
+  publisher_name: NOAA SWFSC Ecosystem Science Division Glider Team
   publisher_url: https://www.fisheries.noaa.gov/about/southwest-fisheries-science-center
   references: https://swfsc.github.io/glider-lab-manual/, https://github.com/c-proof/pyglider,
     https://github.com/SWFSC/esdglider
   sea_name: Coastal Waters of California
   source: Observational data from a profiling glider
-  standard_name_vocabulary: CF Standard Name Table v72
   start_date: 2025-02-24 22:18
   summary: "These data are part of the NOAA Ecosystem Science Division Operation SANDIEGO.\
     \ SANDIEGO is for glider surveys in the California Current Ecosystem in the Southern\
@@ -361,4 +357,4 @@ profile_variables:
     units: seconds since 1970-01-01T00:00:00Z
     observation_type: calculated
   instrument_ctd:
-    comment: placeholder for pyglider profile extraction
+    comment: placeholder attribute required for pyglider profile extraction

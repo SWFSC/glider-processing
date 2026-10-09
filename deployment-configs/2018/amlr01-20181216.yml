@@ -1,17 +1,14 @@
 metadata:
-  Metadata_Conventions: Unidata Dataset Discovery v1.0, COARDS, CF-1.8
-  acknowledgment: This work was supported by funding from NOAA.
+  acknowledgement: This work was supported by funding from NOAA.
   comment: ' '
   contributor_name: Christian Reiss, George Watters, Jennifer Walsh, Anthony Cossio,
     Samuel Woodman
   contributor_role: Principal Investigator, Principal Investigator, Glider Pilot,
     Glider Pilot, Data Manager
   creator_email: nmfs.swfsc.esd-gliders@noaa.gov
-  creator_name: Christian Reiss
+  creator_name: NOAA U.S. Antarctic Marine Living Resources Program
   creator_url: https://www.fisheries.noaa.gov/about/southwest-fisheries-science-center
   deployment_name: amlr01-20181216
-  disclaimer: This data may be redistributed and used without restriction. Data provided
-    as is with no expressed or implied assurance of quality assurance or quality control
   format_version: IOOS_Glider_NetCDF_v2.0.nc
   glider_instrument_name: slocum
   glider_model: Teledyne Webb Research Slocum G3 glider
@@ -28,20 +25,19 @@ metadata:
   keywords_vocabulary: GCMD Science Keywords
   license: These data were produced by NOAA and are not subject to copyright protection
     in the United States. NOAA waives any potential copyright and related rights in
-    thse data worldwide through the Creative Commons Zero 1.0 Universal Public Domain
+    these data worldwide through the Creative Commons Zero 1.0 Universal Public Domain
     Dedication (CC0-1.0, https://creativecommons.org/publicdomain/zero/1.0/).
   metadata_link: https://swfsc.github.io/glider-lab-manual/
   naming_authority: gov.noaa.fisheries
   platform_type: Slocum Glider
   project: FREEBYRD
   publisher_email: nmfs.swfsc.esd-gliders@noaa.gov
-  publisher_name: Sam Woodman
+  publisher_name: NOAA SWFSC Ecosystem Science Division Glider Team
   publisher_url: https://www.fisheries.noaa.gov/about/southwest-fisheries-science-center
   references: https://swfsc.github.io/glider-lab-manual/, https://github.com/c-proof/pyglider,
     https://github.com/SWFSC/esdglider
   sea_name: Southern Ocean
   source: Observational data from a profiling glider
-  standard_name_vocabulary: CF Standard Name Table v72
   summary: These data are part of the U.S. Antarctic Marine Living Resources (AMLR)
     Program Operation FREEBYRD. FREEBYRD is a long term program to replace ship-based
     surveys with autonomous vehicles to estimate Antarctic krill biomass in support
@@ -341,4 +337,4 @@ profile_variables:
     units: seconds since 1970-01-01T00:00:00Z
     observation_type: calculated
   instrument_ctd:
-    comment: placeholder for pyglider profile extraction
+    comment: placeholder attribute required for pyglider profile extraction

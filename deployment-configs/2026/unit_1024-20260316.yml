@@ -1,8 +1,7 @@
 metadata:
-  Metadata_Conventions: Unidata Dataset Discovery v1.0, COARDS, CF-1.8
-  acknowledgment: This work was supported by funding from NOAA.
-  comment: glider was recovered early due to an aft leak. 
-    Glider was swapped out with glider 'amlr08' at the time of recovery on 3/21/2026.
+  acknowledgement: This work was supported by funding from NOAA.
+  comment: glider was recovered early due to an aft leak. Glider was swapped out with
+    glider 'amlr08' at the time of recovery on 3/21/2026.
   contributor_name: Heidi Taylor, Jennifer Walsh, Anthony Cossio, Tegan Murray, Kourtney
     Burger, Cara Wilson, Samuel Woodman
   contributor_role: Principal Investigator, Glider Pilot, Glider Pilot, Glider Pilot,
@@ -11,14 +10,13 @@ metadata:
   creator_name: NOAA SWFSC Ecosystem Science Division Glider Team
   creator_url: https://www.fisheries.noaa.gov/about/southwest-fisheries-science-center
   deployment_name: unit_1024-20260316
-  disclaimer: This data may be redistributed and used without restriction. Data provided
-    as is with no expressed or implied assurance of quality assurance or quality control
   format_version: IOOS_Glider_NetCDF_v2.0.nc
   glider_instrument_name: slocum
   glider_model: Teledyne Webb Research Slocum G3 glider
   glider_name: unit_1024
   glider_serial: '1024'
-  institution: NOAA National Marine Fisheries Service Southwest Fisheries Science Center
+  institution: NOAA National Marine Fisheries Service Southwest Fisheries Science
+    Center
   keywords: AUVS > Autonomous Underwater Vehicles, Earth Science > Oceans > Ocean
     Pressure > Water Pressure, Earth Science > Oceans > Ocean Temperature > Water
     Temperature, Earth Science > Oceans > Salinity/Density > Conductivity, Earth Science
@@ -42,17 +40,14 @@ metadata:
     https://github.com/SWFSC/esdglider
   sea_name: Coastal Waters of California
   source: Observational data from a profiling glider
-  standard_name_vocabulary: CF Standard Name Table v72
   start_date: '2026-03-16 17:59:00'
-  summary: These data are part of the NOAA Ecosystem Science Division CalCOFI Operation. 
-    The main objective of this deployment 
-    was to use a new Shadowgraph model (SG-V3-02, Williamson &
-    Associates (Wassoc)) to obtain imagery of the plankton community in the Southern
-    California Bight off San Diego, CA, and to overlap in time and 
-    space with vessel sampling to enable data comparisons. 
-    Other sensors included a CTD, an optical sensor
-    (ECO Puck) for chlorophyll, backscatter, and colored dissolved organic matter
-    measurements, and an oxygen sensor.
+  summary: These data are part of the NOAA Ecosystem Science Division CalCOFI Operation.
+    The main objective of this deployment was to use a new Shadowgraph model (SG-V3-02,
+    Williamson & Associates (Wassoc)) to obtain imagery of the plankton community
+    in the Southern California Bight off San Diego, CA, and to overlap in time and
+    space with vessel sampling to enable data comparisons. Other sensors included
+    a CTD, an optical sensor (ECO Puck) for chlorophyll, backscatter, and colored
+    dissolved organic matter measurements, and an oxygen sensor.
   transmission_system: IRIDIUM
   wmo_id: ' '
 glider_devices:
@@ -354,4 +349,4 @@ profile_variables:
     units: seconds since 1970-01-01T00:00:00Z
     observation_type: calculated
   instrument_ctd:
-    comment: placeholder for pyglider profile extraction
+    comment: placeholder attribute required for pyglider profile extraction

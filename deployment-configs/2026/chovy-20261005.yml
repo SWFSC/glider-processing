@@ -1,17 +1,14 @@
 metadata:
-  Metadata_Conventions: Unidata Dataset Discovery v1.0, COARDS, CF-1.8
-  acknowledgment: This work was supported by funding from NOAA.
+  acknowledgement: This work was supported by funding from NOAA.
   comment: El Nino 2026
-  contributor_name: Heidi Taylor, Jennifer Walsh, Anthony Cossio, Greta ODea, Tegan Murray, Kourtney
-    Burger, Cara Wilson, Jacob Partida, Samuel Woodman
-  contributor_role: Principal Investigator, Glider Pilot, Glider Pilot, Glider Pilot, Glider Pilot,
-    Glider Pilot, Glider Pilot, Glider Pilot, Data Manager
+  contributor_name: Heidi Taylor, Jennifer Walsh, Anthony Cossio, Greta ODea, Tegan
+    Murray, Kourtney Burger, Cara Wilson, Jacob Partida, Samuel Woodman
+  contributor_role: Principal Investigator, Glider Pilot, Glider Pilot, Glider Pilot,
+    Glider Pilot, Glider Pilot, Glider Pilot, Glider Pilot, Data Manager
   creator_email: nmfs.swfsc.esd-gliders@noaa.gov
   creator_name: NOAA SWFSC Ecosystem Science Division Glider Team
   creator_url: https://www.fisheries.noaa.gov/about/southwest-fisheries-science-center
   deployment_name: chovy-20261005
-  disclaimer: This data may be redistributed and used without restriction. Data provided
-    as is with no expressed or implied assurance of quality assurance or quality control
   format_version: IOOS_Glider_NetCDF_v2.0.nc
   glider_instrument_name: slocum
   glider_model: Teledyne Webb Research Slocum G3 glider
@@ -25,10 +22,10 @@ metadata:
     > Oceans > Salinity/Density > Density, Earth Science > Oceans > Salinity/Density
     > Salinity, In Situ Ocean-based platforms > Seaglider, glider, Slocum, trajectory,
     underwater glider, water, wmo
-  keywords_vocabulary: GCMD Science Keywordsp.
+  keywords_vocabulary: GCMD Science Keywords
   license: These data were produced by NOAA and are not subject to copyright protection
     in the United States. NOAA waives any potential copyright and related rights in
-    thse data worldwide through the Creative Commons Zero 1.0 Universal Public Domain
+    these data worldwide through the Creative Commons Zero 1.0 Universal Public Domain
     Dedication (CC0-1.0, https://creativecommons.org/publicdomain/zero/1.0/).
   metadata_link: https://swfsc.github.io/glider-lab-manual/
   naming_authority: gov.noaa.fisheries
@@ -36,25 +33,25 @@ metadata:
   platform_type: Slocum Glider
   project: ENSO 26/27
   publisher_email: nmfs.swfsc.esd-gliders@noaa.gov
-  publisher_name: Sam Woodman
+  publisher_name: NOAA SWFSC Ecosystem Science Division Glider Team
   publisher_url: https://www.fisheries.noaa.gov/about/southwest-fisheries-science-center
   references: https://swfsc.github.io/glider-lab-manual/, https://github.com/c-proof/pyglider,
     https://github.com/SWFSC/esdglider
   sea_name: Coastal Waters of California
   source: Observational data from a profiling glider
-  standard_name_vocabulary: CF Standard Name Table v72
   start_date: 2026-10-05 20:16
   summary: "This glider was deployed as the second of several month long deployments\
     \ as part of a targeted sampling program to monitor the evolution and ecosystem\
-    \ impacts of a predicted \"very strong\" El Ni\xF1o. It was deployed along the Trinidad\
-    \ Head Line starting in early October, and future deployments will continue through\
-    \ spring 2027. The glider continuously sampled a line transect out to approximately\
-    \ 100 km and to depths of 500 meters. Science sensors included a shadowgraph for\
-    \ high-resolution plankton imaging, a CTD, an optical sensor (ECO Puck) for chlorophyll,\
-    \ backscatter, and colored dissolved organic matter measurements, and an oxygen\
-    \ sensor. Data from this deployment will be used to fill spatial and temporal\
-    \ gaps between scheduled ship surveys, assess how marine heatwaves modify El Ni\xF1\
-    o impacts, verify ocean models, and inform dynamic ocean management frameworks."
+    \ impacts of a predicted \"very strong\" El Ni\xF1o. It was deployed along the\
+    \ Trinidad Head Line starting in early October, and future deployments will continue\
+    \ through spring 2027. The glider continuously sampled a line transect out to\
+    \ approximately 100 km and to depths of 500 meters. Science sensors included a\
+    \ shadowgraph for high-resolution plankton imaging, a CTD, an optical sensor (ECO\
+    \ Puck) for chlorophyll, backscatter, and colored dissolved organic matter measurements,\
+    \ and an oxygen sensor. Data from this deployment will be used to fill spatial\
+    \ and temporal gaps between scheduled ship surveys, assess how marine heatwaves\
+    \ modify El Ni\xF1o impacts, verify ocean models, and inform dynamic ocean management\
+    \ frameworks."
   transmission_system: IRIDIUM
   wmo_id: ' '
 glider_devices:
@@ -357,4 +354,4 @@ profile_variables:
     units: seconds since 1970-01-01T00:00:00Z
     observation_type: calculated
   instrument_ctd:
-    comment: placeholder for pyglider profile extraction
+    comment: placeholder attribute required for pyglider profile extraction
