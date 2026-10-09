@@ -43,10 +43,11 @@ metadata:
   sea_name: Coastal Waters of California
   source: Observational data from a profiling glider
   standard_name_vocabulary: CF Standard Name Table v72
-  summary: "This glider was deployed as the first of several month long deployments\
+  start_date: 2026-10-05 20:16
+  summary: "This glider was deployed as the second of several month long deployments\
     \ as part of a targeted sampling program to monitor the evolution and ecosystem\
-    \ impacts of a predicted \"very strong\" El Ni\xF1o. It was deployed along CalCOFI\
-    \ Line 93 starting in late August, and future deployments will continue through\
+    \ impacts of a predicted \"very strong\" El Ni\xF1o. It was deployed along the Trinidad\
+    \ Head Line starting in early October, and future deployments will continue through\
     \ spring 2027. The glider continuously sampled a line transect out to approximately\
     \ 100 km and to depths of 500 meters. Science sensors included a shadowgraph for\
     \ high-resolution plankton imaging, a CTD, an optical sensor (ECO Puck) for chlorophyll,\
@@ -355,3 +356,5 @@ profile_variables:
     calendar: gregorian
     units: seconds since 1970-01-01T00:00:00Z
     observation_type: calculated
+  instrument_ctd:
+    comment: placeholder for pyglider profile extraction
