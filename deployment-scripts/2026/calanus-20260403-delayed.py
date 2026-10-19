@@ -1,10 +1,11 @@
 import logging
 from pathlib import Path
 
+import numpy as np
 import xarray as xr
 from esdglider.slocum import pipeline
 
-from esdglider import gcp, imagery, paths, plots, qartod, utils
+from esdglider import gcp, imagery, paths, plots, qartod
 
 logger = logging.getLogger(__name__)
 
@@ -73,6 +74,15 @@ if __name__ == "__main__":
         tsraw = xr.load_dataset(outname_dict_ts["outname_tsraw"])
         tseng = xr.load_dataset(outname_dict_ts["outname_tseng"])
         tssci = xr.load_dataset(outname_dict_ts["outname_tssci"])
+
+        # TODO: handle bad lat/lons. And m_heading? And others?
+        bad_ll_slice = {"time": slice('2026-04-13 01:30:00', '2026-04-13 14:30:00')}
+        tseng["latitude"].loc[bad_ll_slice] = np.nan
+        tssci["latitude"].loc[bad_ll_slice] = np.nan
+        tseng["longitude"].loc[bad_ll_slice] = np.nan
+        tssci["longitude"].loc[bad_ll_slice] = np.nan
+        # tssci["m_heading"].loc[bad_ll_slice] = np.nan
+        # tseng["m_heading"].loc[bad_ll_slice] = np.nan
 
         # Adjust profile index
         logger.info("Correcting profile_index for raw, eng, and sci datasets")

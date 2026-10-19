@@ -66,12 +66,9 @@ if __name__ == "__main__":
 
     if write_nc:
         tsraw = xr.load_dataset(outname_dict_ts["outname_tsraw"])
-        # tseng = xr.load_dataset(outname_dict_ts["outname_tseng"])
-        # tssci = xr.load_dataset(outname_dict_ts["outname_tssci"])
 
         # Adjust profile index
         logger.info("Correcting profile_index for raw, eng, and sci datasets")
-        # tssci["profile_index"].loc[dict(time="2024-11-13 15:14:59")] = 590.5
         tsraw["profile_index"].loc[
             {"time": slice("2026-02-01 09:05", "2026-02-01 09:16:10")}
         ] = 397
@@ -81,6 +78,12 @@ if __name__ == "__main__":
         tsraw["profile_index"].loc[
             {"time": slice("2026-01-25 01:51", "2026-01-25 01:55")}
         ] = 182
+        tsraw["profile_index"].loc[
+            {"time": slice("2026-01-23 02:06:22.7", "2026-01-23 02:09:37")}
+        ] = 154.5
+        tsraw["profile_index"].loc[
+            {"time": slice("2026-01-20 21:44:27", "2026-01-20 21:46:35.6")}
+        ] = 124
         
         pipeline.complete_profile_correction(
             tsraw=tsraw,
@@ -97,6 +100,14 @@ if __name__ == "__main__":
             input_file=outname_dict_ts["outname_tssci"],
             output_file=outname_dict_ts["outname_tssci"],
             overwrite_qc=True
+        )
+
+        logger.info("Generating profile netCDF files---------------------")
+        pipeline.create_ngdac_profiles(
+            inname=outname_dict_ts["outname_tssci"],
+            outdir=glider_paths["ngdacdir"],
+            deploymentyaml=glider_paths["deploymentyaml"],
+            force=True,
         )
 
 
@@ -131,15 +142,6 @@ if __name__ == "__main__":
         base_path=glider_paths["plotdir"],
         figsize_x=11,
         figsize_y=8.5,
-    )
-
-    #--------------------------------------------------------------------------
-    ### Generate profile netCDF files for the DAC
-    pipeline.create_ngdac_profiles(
-        inname=outname_dict["outname_tssci"],
-        outdir=glider_paths["ngdacdir"],
-        deploymentyaml=glider_paths["deploymentyaml"],
-        force=True,
     )
 
     #--------------------------------------------------------------------------

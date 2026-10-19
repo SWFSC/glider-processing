@@ -1,9 +1,9 @@
 metadata:
-  acknowledgement: This work was supported by funding from NOAA.
+  acknowledgement: This work was supported by funding from NOAA Fisheries, SWFSC.
   comment: ' '
-  contributor_name: Christian Reiss, George Watters, Jennifer Walsh, Anthony Cossio,
-    George Cutter, Samuel Woodman
-  contributor_role: Principal Investigator, Principal Investigator, Glider Pilot,
+  contributor_name: Christian Reiss, George Watters, George Cutter, 
+    Jennifer Walsh, Anthony Cossio, Samuel Woodman
+  contributor_role: Principal Investigator, Principal Investigator, Principal Investigator/Glider Pilot,
     Glider Pilot, Glider Pilot, Data Manager
   creator_email: nmfs.swfsc.esd-gliders@noaa.gov
   creator_name: NOAA U.S. Antarctic Marine Living Resources Program
@@ -40,7 +40,8 @@ metadata:
   sea_name: Coastal Waters of California
   source: Observational data from a profiling glider
   start_date: 20220513T185655
-  summary: This was a test deployment by the NOAA SWFSC Ecosystem Science Division
+  summary: This was a short test deployment off San Diego by the 
+    NOAA SWFSC U.S. Antarctic Marine Living Resources Program
     to test a new WASSOC shadowgraph and Nortek compact echosounder.
   transmission_system: IRIDIUM
   wmo_id: ' '

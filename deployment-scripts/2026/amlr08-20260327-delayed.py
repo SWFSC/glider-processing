@@ -1,6 +1,7 @@
 import logging
 from pathlib import Path
 
+import numpy as np
 import xarray as xr
 from esdglider.slocum import pipeline
 
@@ -12,6 +13,7 @@ logger = logging.getLogger(__name__)
 deployment_name = "amlr08-20260327"
 mode = "delayed"
 write_nc = True
+prof_args = {}          # Named optional parameters for finding profiles
 
 ### Consistent variables
 home = Path.home()
@@ -56,14 +58,41 @@ if __name__ == "__main__":
         write_eng=write_nc,
         write_sci=write_nc,
         file_info=file_info,
+        binary_search="*.[de]cd", 
+        prof_args=prof_args,
     )
 
-    ### Make any adjustments to netCDF files
-    # if write_nc:
-    #     logging.info("Adjusting datasets, after review")
-    #     tsraw = xr.load_dataset(outname_dict["outname_tsraw"])
-    #     tseng = xr.load_dataset(outname_dict["outname_tseng"])
-    #     tssci = xr.load_dataset(outname_dict["outname_tssci"])
+    if write_nc:
+        logger.info("Adjusting datasets, after review---------------------")
+        # Correct profile indices, and make other adjustments to netCDF files
+        tsraw = xr.load_dataset(outname_dict_ts["outname_tsraw"])
+        tseng = xr.load_dataset(outname_dict_ts["outname_tseng"])
+        tssci = xr.load_dataset(outname_dict_ts["outname_tssci"])
+
+        # TODO: handle bad lat/lons. And m_heading? And others?
+        bad_ll_slice = {"time": slice('2026-03-29 10:25:30', '2026-03-29 17:31:00')}
+        tseng["latitude"].loc[bad_ll_slice] = np.nan
+        tssci["latitude"].loc[bad_ll_slice] = np.nan
+        tseng["longitude"].loc[bad_ll_slice] = np.nan
+        tssci["longitude"].loc[bad_ll_slice] = np.nan
+        # tseng["m_heading"].loc[bad_ll_slice] = np.nan
+        # tssci["m_heading"].loc[bad_ll_slice] = np.nan
+
+
+        # Adjust profile index
+        logger.info("Correcting profile_index for raw, eng, and sci datasets")
+        tsraw["profile_index"].loc[
+            {"time": slice("2026-04-13 23:50", "2026-04-13 23:59:40")}
+        ] = 320.5        
+        tsraw["profile_index"].loc[
+            {"time": slice("2026-04-17 06:00", "2026-04-17 07:02")}
+        ] = 422.5
+        pipeline.complete_profile_correction(
+            tsraw=tsraw,
+            tseng=xr.load_dataset(outname_dict_ts["outname_tseng"]),
+            tssci=xr.load_dataset(outname_dict_ts["outname_tssci"]),
+            glider_paths=glider_paths,
+        )
 
     
     # Create qc variables for science netCDF files, after corrections
@@ -73,6 +102,14 @@ if __name__ == "__main__":
             input_file=outname_dict_ts["outname_tssci"],
             output_file=outname_dict_ts["outname_tssci"],
             overwrite_qc=True
+        )
+    
+        logger.info("Generating profile netCDF files---------------------")
+        pipeline.create_ngdac_profiles(
+            inname=outname_dict_ts["outname_tssci"],
+            outdir=glider_paths["ngdacdir"],
+            deploymentyaml=glider_paths["deploymentyaml"],
+            force=True,
         )
 
     logger.info("Generating gridded netCDF files---------------------")
@@ -105,12 +142,4 @@ if __name__ == "__main__":
     )
 
     #--------------------------------------------------------------------------
-    ### Generate profile netCDF files for the DAC
-    pipeline.create_ngdac_profiles(
-        inname=outname_dict["outname_tssci"],
-        outdir=glider_paths["ngdacdir"],
-        deploymentyaml=glider_paths["deploymentyaml"],
-        force=True,
-    )
-
     logger.info("Completed scheduled processing")

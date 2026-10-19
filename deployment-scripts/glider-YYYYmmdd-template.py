@@ -97,7 +97,7 @@ if __name__ == "__main__":
     #         glider_paths=glider_paths,
     #     )
 
-    # # Using science netCDF files, after corrections:
+    # # Using science netCDF files, after any corrections:
     # if write_nc:
     #     logger.info("Generating qc flags---------------------")
     #     qartod.run_qartod_qc(

@@ -10,8 +10,11 @@ logger = logging.getLogger(__name__)
 
 ### Variables for user to update
 deployment_name = "amlr08-20260321"
-mode = "delayed"
-write_nc = True
+mode = "delayed"        # "delayed" or "rt"
+write_nc = True         # Write NC files?
+profile_args = {
+    "stall": 2
+}
 
 ### Consistent variables
 home = Path.home()
@@ -56,6 +59,8 @@ if __name__ == "__main__":
         write_eng=write_nc,
         write_sci=write_nc,
         file_info=file_info,
+        binary_search="*.[de]cd", 
+        prof_args = profile_args, 
     )
 
     ### Make any adjustments to netCDF files
@@ -73,6 +78,14 @@ if __name__ == "__main__":
             input_file=outname_dict_ts["outname_tssci"],
             output_file=outname_dict_ts["outname_tssci"],
             overwrite_qc=True
+        )
+
+        logger.info("Generating profile netCDF files---------------------")
+        pipeline.create_ngdac_profiles(
+            inname=outname_dict_ts["outname_tssci"],
+            outdir=glider_paths["ngdacdir"],
+            deploymentyaml=glider_paths["deploymentyaml"],
+            force=True,
         )
 
     logger.info("Generating gridded netCDF files---------------------")
@@ -105,12 +118,4 @@ if __name__ == "__main__":
     )
 
     #--------------------------------------------------------------------------
-    ### Generate profile netCDF files for the DAC
-    pipeline.create_ngdac_profiles(
-        inname=outname_dict["outname_tssci"],
-        outdir=glider_paths["ngdacdir"],
-        deploymentyaml=glider_paths["deploymentyaml"],
-        force=True,
-    )
-
     logger.info("Completed scheduled processing")

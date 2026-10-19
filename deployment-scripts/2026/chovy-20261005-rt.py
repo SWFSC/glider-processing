@@ -1,18 +1,13 @@
 # Script for scraping and processing near real-time data from chovy-20261005
-# To complete, within cloud shell, and run the following
-# ./rclone_install.sh
-# rlone copy gcp-prod:swfscesd-glider-deployments-data-out/2026/chovy-20261005/plots/rt "drive-smw:Data Shares/esd-glider-data-share/chovy-20261005/plots-rt" --progress
-# rclone copy gcp-prod:swfscesd-glider-deployments-data-out/2026/chovy-20261005/processed-L1/chovy-20261005-rt-sci.nc "drive-smw:Data Shares/esd-glider-data-share/chovy-20261005/" --progress
 
 import logging
-
-# import numpy as np
-# import xarray as xr
 from pathlib import Path
 
-from esdglider.slocum import pipeline, rt
+# import numpy as np
+import xarray as xr
+from esdglider.slocum import core, pipeline, rt
 
-from esdglider import gcp, paths, plots, qartod
+from esdglider import gcp, paths, plots, qartod, utils
 
 logger = logging.getLogger(__name__)
 
@@ -54,6 +49,7 @@ if __name__ == "__main__":
     gcp.gcs_mount_bucket(paths.data_in_bucket_name, glider_paths["data_in_path"], ro=True)
     gcp.gcs_mount_bucket(paths.data_out_bucket_name, glider_paths["data_out_path"], ro=False)
 
+
     logger.info("Rsyncing nrt files from SFMC to GCP---------------------")
     rt.scrape_sfmc(
         deployment_name=deployment_name, 
@@ -76,35 +72,44 @@ if __name__ == "__main__":
         write_sci=write_nc,
         file_info=file_info,
         run_checks=False, 
-        #prof_args=prof_args, 
+        prof_args=prof_args, 
     )
 
-    # # Correct profiles, and make other adjustments to netCDF files, if necessary
-    # if write_nc:
-    #     logger.info("Adjusting datasets, after review---------------------")
-    #     tsraw = xr.load_dataset(outname_dict_ts["outname_tsraw"])
-
-    #     # Adjust profile index
-    #     logger.info("Correcting profile_index for raw, eng, and sci datasets")
-    #     tsraw["profile_index"].loc[{"time": "2024-11-13 15:14:59"}] = 590.5
-    #     tsraw["profile_index"].loc[
-    #         {"time": slice("2026-02-01 09:05", "2026-02-01 09:16:10")}
-    #     ] = 397
-
-    #     pipeline.complete_profile_correction(
-    #         tsraw=tsraw,
-    #         tseng=xr.load_dataset(outname_dict_ts["outname_tseng"]),
-    #         tssci=xr.load_dataset(outname_dict_ts["outname_tssci"]),
-    #         glider_paths=glider_paths,
-    #     )
-
-    # Create qc variables for science netCDF files, after corrections
+    # Adjust netcdf files
+    if write_nc:
+        logger.info("Adding rt comment block to timeseries files")
+        rt_comment = (
+            "To conserve battery and maximize mission duration, "
+            "this glider is not sending back data from every profile, "
+            "and data transmission rates may not be consistent. "
+            "Thus, profile numbers for this real-time data will not be "
+            "representative of the actual number of profiles "
+            "that the glider has flown."
+        )
+        for ts_key in ["outname_tsraw", "outname_tseng", "outname_tssci"]:
+            if ts_key in outname_dict_ts:
+                ts_path = outname_dict_ts[ts_key]
+                ds = xr.load_dataset(ts_path)
+                ds.attrs["comment"] = utils.append_string(ds.attrs["comment"], rt_comment)
+                ds.to_netcdf(
+                    ts_path, 
+                    encoding={'time': core.time_encoding}
+                )
+    # Using science netCDF files, after any corrections:
     if write_nc:
         logger.info("Generating qc flags---------------------")
         qartod.run_qartod_qc(
             input_file=outname_dict_ts["outname_tssci"],
             output_file=outname_dict_ts["outname_tssci"],
             overwrite_qc=True
+        )
+    
+        logger.info("Generating profile netCDF files---------------------")
+        pipeline.create_ngdac_profiles(
+            inname=outname_dict_ts["outname_tssci"],
+            outdir=glider_paths["ngdacdir"],
+            deploymentyaml=glider_paths["deploymentyaml"],
+            force=True,
         )
 
     logger.info("Generating gridded netCDF files---------------------")
@@ -125,15 +130,6 @@ if __name__ == "__main__":
         crs="Mercator",
         base_path=glider_paths["plotdir"],
         bar_file=str(etopo_path),
-    )
-
-    #--------------------------------------------------------------------------
-    ### Generate profile netCDF files for the DAC
-    pipeline.create_ngdac_profiles(
-        inname=outname_dict["outname_tssci"],
-        outdir=glider_paths["ngdacdir"],
-        deploymentyaml=glider_paths["deploymentyaml"],
-        force=True,
     )
 
     #--------------------------------------------------------------------------
