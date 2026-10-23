@@ -131,17 +131,17 @@ if __name__ == "__main__":
     # --------------------------------------------------------------------------
     ### Plots
     logger.info("Generating plots---------------------")
-    plots.esd_all_plots(
-        outname_dict, 
-        crs=None, 
-        base_path=glider_paths["plotdir"], 
-    )
     plots.sci_surface_map_loop(
         xr.load_dataset(outname_dict["outname_gr5m"]),
         crs="Mercator",
         base_path=glider_paths["plotdir"],
         figsize_x=11,
         figsize_y=8.5,
+    )
+    plots.esd_all_plots(
+        outname_dict, 
+        crs=None, 
+        base_path=glider_paths["plotdir"], 
     )
 
     #--------------------------------------------------------------------------

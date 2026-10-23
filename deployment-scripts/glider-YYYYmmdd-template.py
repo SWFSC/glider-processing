@@ -70,6 +70,7 @@ if __name__ == "__main__":
         write_sci=write_nc,
         sci_use_m_depth=sci_use_m_depth, 
         file_info=file_info,
+        # binary_search="*.[de]cd", 
         prof_args=prof_args, 
     )
 
@@ -139,17 +140,17 @@ if __name__ == "__main__":
     #     bar_file=str(etopo_path),
     # )
     # ## OR, for Antarctic ##
-    # plots.esd_all_plots(
-    #     outname_dict, 
-    #     crs=None, 
-    #     base_path=glider_paths["plotdir"], 
-    # )
     # plots.sci_surface_map_loop(
     #     xr.load_dataset(outname_dict["outname_gr5m"]),
     #     crs="Mercator",
     #     base_path=glider_paths["plotdir"],
     #     figsize_x=11,
     #     figsize_y=8.5,
+    # )
+    # plots.esd_all_plots( #second so combine_pdf catches surface maps
+    #     outname_dict, 
+    #     crs=None, 
+    #     base_path=glider_paths["plotdir"], 
     # )
 
     #--------------------------------------------------------------------------

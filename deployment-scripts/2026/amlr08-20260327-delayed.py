@@ -69,15 +69,12 @@ if __name__ == "__main__":
         tseng = xr.load_dataset(outname_dict_ts["outname_tseng"])
         tssci = xr.load_dataset(outname_dict_ts["outname_tssci"])
 
-        # TODO: handle bad lat/lons. And m_heading? And others?
+        # Handle bad lat/lons
         bad_ll_slice = {"time": slice('2026-03-29 10:25:30', '2026-03-29 17:31:00')}
         tseng["latitude"].loc[bad_ll_slice] = np.nan
         tssci["latitude"].loc[bad_ll_slice] = np.nan
         tseng["longitude"].loc[bad_ll_slice] = np.nan
         tssci["longitude"].loc[bad_ll_slice] = np.nan
-        # tseng["m_heading"].loc[bad_ll_slice] = np.nan
-        # tssci["m_heading"].loc[bad_ll_slice] = np.nan
-
 
         # Adjust profile index
         logger.info("Correcting profile_index for raw, eng, and sci datasets")

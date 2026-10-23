@@ -49,22 +49,11 @@ if __name__ == "__main__":
         mode = mode, 
         home_path = home,
     )
-    # gcp.gcs_mount_bucket(paths.data_in_bucket_name, glider_paths["data_in_path"], ro=True)
-    # gcp.gcs_mount_bucket(paths.data_out_bucket_name, glider_paths["data_out_path"], ro=False)
     gcp.gcs_mount_bucket(defaults.BUCKET_DATA_IN, glider_paths["data_in_path"], ro=True)
     gcp.gcs_mount_bucket(defaults.BUCKET_DATA_OUT, glider_paths["data_out_path"], ro=False)
 
     logger.info("Rsyncing nrt files from SFMC to GCP---------------------")
-    # rt.scrape_sfmc(
-    #     deployment_name=deployment_name, 
-    #     bucket_name=paths.data_in_bucket_name, 
-    #     sfmc_path=str(home / "sfmc"), 
-    #     cache_path=glider_paths["cacdir"], 
-    #     gcpproject_id="ggn-nmfs-swfscesd-prod-1", 
-    #     secret_id="sfmc-swoodman"
-    # )
-
-    if write_nc:
+    if write_nc and mode == "rt":
         rt.sync_sfmc_deployment(
             deployment_name=deployment_name, 
             bucket_name=defaults.BUCKET_DATA_IN, 
