@@ -4,7 +4,7 @@ from pathlib import Path
 import xarray as xr
 from esdglider.slocum import pipeline
 
-from esdglider import gcp, paths, plots, qartod
+from esdglider import defaults, gcp, paths, plots, qartod
 
 logger = logging.getLogger(__name__)
 
@@ -40,8 +40,8 @@ if __name__ == "__main__":
 
     logger.info("Generating glider paths")
     glider_paths = paths.get_path_glider(deployment_name, mode, home_path=home)
-    gcp.gcs_mount_bucket(paths.data_in_bucket_name, glider_paths["data_in_path"], ro=True)
-    gcp.gcs_mount_bucket(paths.data_out_bucket_name, glider_paths["data_out_path"], ro=False)
+    gcp.gcs_mount_bucket(defaults.BUCKET_DATA_IN, glider_paths["data_in_path"], ro=True)
+    gcp.gcs_mount_bucket(defaults.BUCKET_DATA_OUT, glider_paths["data_out_path"], ro=False)
 
     #--------------------------------------------------------------------------
     ### Timeseries and gridded netCDF generation

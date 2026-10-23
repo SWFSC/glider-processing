@@ -5,7 +5,7 @@ import numpy as np
 import xarray as xr
 from esdglider.slocum import pipeline
 
-from esdglider import gcp, imagery, paths, plots, qartod
+from esdglider import defaults, gcp, imagery, paths, plots, qartod
 
 logger = logging.getLogger(__name__)
 
@@ -19,7 +19,7 @@ profile_args = {
 
 ### Consistent variables
 home = Path.home()
-logs_bucket_name = "swfscesd-glider-logs"
+logs_bucket_name = defaults.BUCKET_LOGS
 logs_path = home / "mnt-gcs" / logs_bucket_name
 file_info, log_file_name = paths.get_file_info(Path(__file__))
 
@@ -45,8 +45,8 @@ if __name__ == "__main__":
         mode = mode, 
         home_path = home,
     )
-    gcp.gcs_mount_bucket(paths.data_in_bucket_name, glider_paths["data_in_path"], ro=True)
-    gcp.gcs_mount_bucket(paths.data_out_bucket_name, glider_paths["data_out_path"], ro=False)
+    gcp.gcs_mount_bucket(defaults.BUCKET_DATA_IN, glider_paths["data_in_path"], ro=True)
+    gcp.gcs_mount_bucket(defaults.BUCKET_DATA_OUT, glider_paths["data_out_path"], ro=False)
 
 
     #--------------------------------------------------------------------------
@@ -75,18 +75,15 @@ if __name__ == "__main__":
         tseng = xr.load_dataset(outname_dict_ts["outname_tseng"])
         tssci = xr.load_dataset(outname_dict_ts["outname_tssci"])
 
-        # TODO: handle bad lat/lons. And m_heading? And others?
+        # Handle bad lat/lons. 
         bad_ll_slice = {"time": slice('2026-04-13 01:30:00', '2026-04-13 14:30:00')}
         tseng["latitude"].loc[bad_ll_slice] = np.nan
         tssci["latitude"].loc[bad_ll_slice] = np.nan
         tseng["longitude"].loc[bad_ll_slice] = np.nan
         tssci["longitude"].loc[bad_ll_slice] = np.nan
-        # tssci["m_heading"].loc[bad_ll_slice] = np.nan
-        # tseng["m_heading"].loc[bad_ll_slice] = np.nan
 
         # Adjust profile index
         logger.info("Correcting profile_index for raw, eng, and sci datasets")
-        # tssci["profile_index"].loc[{"time": "2024-11-13 15:14:59"}] = 590.5
         tsraw["profile_index"].loc[
             {"time": slice("2026-04-26 06:47", "2026-04-26 07:20")}
         ] = 578.0
@@ -131,7 +128,7 @@ if __name__ == "__main__":
     
     logger.info("Imagery---------------------")
     img_paths = paths.get_path_imagery(deployment_name, home_path=home)
-    gcp.gcs_mount_bucket(paths.imagery_meta_bucket_name, img_paths["imagery_meta_path"], ro=True)
+    gcp.gcs_mount_bucket(defaults.BUCKET_IMAGERY_META, img_paths["imagery_meta_path"], ro=True)
     imagery.imagery_timeseries(tssci, img_paths)
 
     #--------------------------------------------------------------------------

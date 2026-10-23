@@ -6,7 +6,7 @@ from pathlib import Path
 # import xarray as xr
 from esdglider.slocum import pipeline, rt
 
-from esdglider import aa, gcp, imagery, paths, plots, qartod
+from esdglider import aa, defaults, gcp, imagery, paths, plots, qartod
 
 logger = logging.getLogger(__name__)
 
@@ -20,7 +20,7 @@ prof_args = {}          # Named optional parameters for finding profiles
 ### Consistent variables
 home = Path.home()
 mnt_path = home / "mnt-gcs"
-logs_bucket_name = "swfscesd-glider-logs"
+logs_bucket_name = defaults.BUCKET_LOGS
 logs_path = mnt_path / logs_bucket_name
 file_info, log_file_name = paths.get_file_info(Path(__file__))
 
@@ -45,19 +45,18 @@ if __name__ == "__main__":
         mode = mode, 
         home_path = home,
     )
-    gcp.gcs_mount_bucket(paths.data_in_bucket_name, glider_paths["data_in_path"], ro=True)
-    gcp.gcs_mount_bucket(paths.data_out_bucket_name, glider_paths["data_out_path"], ro=False)
+    gcp.gcs_mount_bucket(defaults.BUCKET_DATA_IN, glider_paths["data_in_path"], ro=True)
+    gcp.gcs_mount_bucket(defaults.BUCKET_DATA_OUT, glider_paths["data_out_path"], ro=False)
 
     #--------------------------------------------------------------------------
     # logger.info("Rsyncing nrt files from SFMC to GCP---------------------")
-    # rt.scrape_sfmc(
-    #     deployment_name=deployment_name, 
-    #     bucket_name=paths.data_in_bucket_name, 
-    #     sfmc_path=str(home / "sfmc"), 
-    #     cache_path=glider_paths["cacdir"], 
-    #     gcpproject_id="ggn-nmfs-swfscesd-prod-1", 
-    #     secret_id="sfmc-swoodman"
-    # )
+    # if write_nc and mode == "rt":
+    #     rt.sync_sfmc_deployment(
+    #         deployment_name=deployment_name, 
+    #         bucket_name=defaults.BUCKET_DATA_IN, 
+    #         sfmc_path=str(home / "sfmc"), 
+    #         cache_path=glider_paths["cacdir"], 
+    #     )
 
     #--------------------------------------------------------------------------
     ### Timeseries and gridded netCDF generation
@@ -105,14 +104,6 @@ if __name__ == "__main__":
     #         output_file=outname_dict_ts["outname_tssci"],
     #         overwrite_qc=True
     #     )
-    
-    #     logger.info("Generating profile netCDF files---------------------")
-    #     pipeline.create_ngdac_profiles(
-    #         inname=outname_dict_ts["outname_tssci"],
-    #         outdir=glider_paths["ngdacdir"],
-    #         deploymentyaml=glider_paths["deploymentyaml"],
-    #         force=True,
-    #     )
 
     # logger.info("Generating gridded netCDF files---------------------")
     # outname_dict_gr = pipeline.generate_gridded(
@@ -133,7 +124,7 @@ if __name__ == "__main__":
     
     # logger.info("Imagery---------------------")
     # img_paths = paths.get_path_imagery(deployment_name, home_path=home)
-    # gcp.gcs_mount_bucket(paths.imagery_meta_bucket_name, img_paths["imagery_meta_path"], ro=True)
+    # gcp.gcs_mount_bucket(defaults.BUCKET_IMAGERY_META, img_paths["imagery_meta_path"], ro=True)
     # imagery.imagery_timeseries(tssci, img_paths)
 
 
@@ -160,6 +151,24 @@ if __name__ == "__main__":
     #     figsize_x=11,
     #     figsize_y=8.5,
     # )
+
+    #--------------------------------------------------------------------------
+    ### Profile files to the IOOS NGDAC
+    # if write_nc:    
+    #     logger.info("Generating profile netCDF files---------------------")
+    #     pipeline.create_ngdac_profiles(
+    #         inname=outname_dict_ts["outname_tssci"],
+    #         outdir=glider_paths["ngdacdir"],
+    #         deploymentyaml=glider_paths["deploymentyaml"],
+    #         force=True,
+    #     )
+
+    #     if mode == "rt":
+    #         logger.info("Syncing profile netCDF files to NGDAC---------------------")
+    #         pipeline.sync_to_ngdac(
+    #             local_dir=glider_paths["ngdacdir"], 
+    #             dry_run=True, 
+    #         )
 
     #--------------------------------------------------------------------------
     logger.info("Completed scheduled processing")
