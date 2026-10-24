@@ -48,15 +48,6 @@ if __name__ == "__main__":
     gcp.gcs_mount_bucket(defaults.BUCKET_DATA_IN, glider_paths["data_in_path"], ro=True)
     gcp.gcs_mount_bucket(defaults.BUCKET_DATA_OUT, glider_paths["data_out_path"], ro=False)
 
-    #--------------------------------------------------------------------------
-    # logger.info("Rsyncing nrt files from SFMC to GCP---------------------")
-    # if write_nc:
-    #     rt.sync_sfmc_deployment(
-    #         deployment_name=deployment_name, 
-    #         bucket_name=defaults.BUCKET_DATA_IN, 
-    #         sfmc_path=str(home / "sfmc"), 
-    #         cache_path=glider_paths["cacdir"], 
-    #     )
 
     #--------------------------------------------------------------------------
     ### Timeseries and gridded netCDF generation
