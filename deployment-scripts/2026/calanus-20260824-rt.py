@@ -16,6 +16,8 @@ from esdglider import gcp, paths, plots, qartod
 
 logger = logging.getLogger(__name__)
 
+# NOTE: script requires esdglider v1.0.0
+
 ### Variables for user to update
 deployment_name = "calanus-20260824"
 mode = "rt"

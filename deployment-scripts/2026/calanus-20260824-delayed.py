@@ -6,6 +6,8 @@ from esdglider.slocum import pipeline
 
 from esdglider import gcp, imagery, paths, plots, qartod
 
+# NOTE: script requires esdglider v1.0.0
+
 logger = logging.getLogger(__name__)
 
 ### Variables for user to update

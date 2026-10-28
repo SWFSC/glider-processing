@@ -5,7 +5,7 @@ import numpy as np
 import xarray as xr
 from esdglider.slocum import pipeline
 
-from esdglider import gcp, imagery, paths, plots, qartod
+from esdglider import defaults, gcp, imagery, paths, plots, qartod
 
 logger = logging.getLogger(__name__)
 
@@ -43,8 +43,8 @@ if __name__ == "__main__":
         mode = mode, 
         home_path = home,
     )
-    gcp.gcs_mount_bucket(paths.data_in_bucket_name, glider_paths["data_in_path"], ro=True)
-    gcp.gcs_mount_bucket(paths.data_out_bucket_name, glider_paths["data_out_path"], ro=False)
+    gcp.gcs_mount_bucket(defaults.BUCKET_DATA_IN, glider_paths["data_in_path"], ro=True)
+    gcp.gcs_mount_bucket(defaults.BUCKET_DATA_OUT, glider_paths["data_out_path"], ro=False)
 
 
     #--------------------------------------------------------------------------
@@ -69,15 +69,12 @@ if __name__ == "__main__":
         tseng = xr.load_dataset(outname_dict_ts["outname_tseng"])
         tssci = xr.load_dataset(outname_dict_ts["outname_tssci"])
 
-        # TODO: handle bad lat/lons. And m_heading? And others?
+        # Handle bad lat/lons
         bad_ll_slice = {"time": slice('2026-03-29 10:25:30', '2026-03-29 17:31:00')}
         tseng["latitude"].loc[bad_ll_slice] = np.nan
         tssci["latitude"].loc[bad_ll_slice] = np.nan
         tseng["longitude"].loc[bad_ll_slice] = np.nan
         tssci["longitude"].loc[bad_ll_slice] = np.nan
-        # tseng["m_heading"].loc[bad_ll_slice] = np.nan
-        # tssci["m_heading"].loc[bad_ll_slice] = np.nan
-
 
         # Adjust profile index
         logger.info("Correcting profile_index for raw, eng, and sci datasets")
@@ -126,7 +123,7 @@ if __name__ == "__main__":
     
     logger.info("Imagery---------------------")
     img_paths = paths.get_path_imagery(deployment_name, home_path=home)
-    gcp.gcs_mount_bucket(paths.imagery_meta_bucket_name, img_paths["imagery_meta_path"], ro=True)
+    gcp.gcs_mount_bucket(defaults.BUCKET_IMAGERY_META, img_paths["imagery_meta_path"], ro=True)
     imagery.imagery_timeseries(tssci, img_paths)
 
     

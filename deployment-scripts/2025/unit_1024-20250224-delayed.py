@@ -1,10 +1,10 @@
 import logging
 from pathlib import Path
 
+import xarray as xr
 from esdglider.slocum import pipeline
 
-import xarray as xr
-from esdglider import gcp, paths, plots, qartod, utils
+from esdglider import defaults, gcp, paths, plots, qartod, utils
 
 logger = logging.getLogger(__name__)
 
@@ -40,8 +40,8 @@ if __name__ == "__main__":
     logger.info("Generating glider paths")
     # Generate glider paths
     glider_paths = paths.get_path_glider(deployment_name, mode, home_path=home)
-    gcp.gcs_mount_bucket(paths.data_in_bucket_name, glider_paths["data_in_path"], ro=True)
-    gcp.gcs_mount_bucket(paths.data_out_bucket_name, glider_paths["data_out_path"], ro=False)
+    gcp.gcs_mount_bucket(defaults.BUCKET_DATA_IN, glider_paths["data_in_path"], ro=True)
+    gcp.gcs_mount_bucket(defaults.BUCKET_DATA_OUT, glider_paths["data_out_path"], ro=False)
 
     #--------------------------------------------------------------------------
     ### Timeseries and gridded netCDF generation
@@ -61,7 +61,7 @@ if __name__ == "__main__":
     if write_nc:
         logger.info("Adjusting datasets, after review---------------------")
         tssci = xr.load_dataset(outname_dict_ts["outname_tssci"])
-        tssci = utils.correct_par(tssci)
+        # tssci = utils.correct_par(tssci)
         tssci.to_netcdf(outname_dict_ts["outname_tssci"])   
 
     # Create qc variables for science netCDF files, after corrections

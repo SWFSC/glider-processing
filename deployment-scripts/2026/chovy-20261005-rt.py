@@ -7,9 +7,11 @@ from pathlib import Path
 import xarray as xr
 from esdglider.slocum import core, pipeline, rt
 
-from esdglider import gcp, paths, plots, qartod, utils
+from esdglider import defaults, gcp, paths, plots, qartod, utils
 
 logger = logging.getLogger(__name__)
+
+# NOTE: script requires esdglider v1.0.0
 
 ### Variables for user to update
 deployment_name = "chovy-20261005"
@@ -46,19 +48,18 @@ if __name__ == "__main__":
         mode = mode, 
         home_path = home,
     )
-    gcp.gcs_mount_bucket(paths.data_in_bucket_name, glider_paths["data_in_path"], ro=True)
-    gcp.gcs_mount_bucket(paths.data_out_bucket_name, glider_paths["data_out_path"], ro=False)
+    gcp.gcs_mount_bucket(defaults.BUCKET_DATA_IN, glider_paths["data_in_path"], ro=True)
+    gcp.gcs_mount_bucket(defaults.BUCKET_DATA_OUT, glider_paths["data_out_path"], ro=False)
 
 
     logger.info("Rsyncing nrt files from SFMC to GCP---------------------")
-    rt.scrape_sfmc(
-        deployment_name=deployment_name, 
-        bucket_name=paths.data_in_bucket_name, 
-        sfmc_path=str(home / "sfmc"), 
-        cache_path=glider_paths["cacdir"], 
-        gcpproject_id="ggn-nmfs-swfscesd-prod-1", 
-        secret_id="sfmc-swoodman"
-    )
+    if write_nc:
+        rt.sync_sfmc_deployment(
+            deployment_name=deployment_name, 
+            bucket_name=defaults.BUCKET_DATA_IN, 
+            sfmc_path=str(home / "sfmc"), 
+            cache_path=glider_paths["cacdir"], 
+        )
 
     #--------------------------------------------------------------------------
     ### Timeseries and gridded netCDF generation
@@ -93,7 +94,7 @@ if __name__ == "__main__":
                 ds.attrs["comment"] = utils.append_string(ds.attrs["comment"], rt_comment)
                 ds.to_netcdf(
                     ts_path, 
-                    encoding={'time': core.time_encoding}
+                    encoding={'time': core.TIME_ENCODING}
                 )
     # Using science netCDF files, after any corrections:
     if write_nc:
@@ -102,14 +103,6 @@ if __name__ == "__main__":
             input_file=outname_dict_ts["outname_tssci"],
             output_file=outname_dict_ts["outname_tssci"],
             overwrite_qc=True
-        )
-    
-        logger.info("Generating profile netCDF files---------------------")
-        pipeline.create_ngdac_profiles(
-            inname=outname_dict_ts["outname_tssci"],
-            outdir=glider_paths["ngdacdir"],
-            deploymentyaml=glider_paths["deploymentyaml"],
-            force=True,
         )
 
     logger.info("Generating gridded netCDF files---------------------")
@@ -131,6 +124,20 @@ if __name__ == "__main__":
         base_path=glider_paths["plotdir"],
         bar_file=str(etopo_path),
     )
+
+    #--------------------------------------------------------------------------
+    ### Profile files to the IOOS NGDAC
+    if write_nc:    
+        logger.info("Generating profile netCDF files---------------------")
+        pipeline.create_ngdac_profiles(
+            inname=outname_dict_ts["outname_tssci"],
+            outdir=glider_paths["ngdacdir"],
+            deploymentyaml=glider_paths["deploymentyaml"],
+            force=True,
+        )
+
+        logger.info("Syncing profile netCDF files to NGDAC---------------------")
+        pipeline.sync_to_ngdac(local_dir=glider_paths["ngdacdir"])
 
     #--------------------------------------------------------------------------
     logger.info("Completed scheduled processing")
