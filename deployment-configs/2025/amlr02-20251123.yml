@@ -1,10 +1,11 @@
 metadata:
-  acknowledgement: This work was supported by funding from NOAA.
+  Metadata_Conventions: Unidata Dataset Discovery v1.0, COARDS, CF-1.8
+  acknowledgement: This work was supported by funding from NOAA Fisheries, SWFSC.
   comment: glider had an aft leak and was recovered early
-  contributor_name: Heidi Taylor, Jennifer Walsh, Anthony Cossio, Tegan Murray, Samuel
-    Woodman
-  contributor_role: Principal Investigator, Glider Pilot, Glider Pilot, Glider Pilot,
-    Data Manager
+  contributor_name: Douglas Krause, Christian Reiss, Heidi Taylor, 
+    Jennifer Walsh, Anthony Cossio, Tegan Murray, Samuel Woodman
+  contributor_role: Principal Investigator, Principal Investigator, Program Lead, 
+    Glider Pilot, Glider Pilot, Glider Pilot, Data Manager
   creator_email: nmfs.swfsc.esd-gliders@noaa.gov
   creator_name: NOAA SWFSC Ecosystem Science Division Glider Team
   creator_url: https://www.fisheries.noaa.gov/about/southwest-fisheries-science-center
@@ -62,6 +63,7 @@ glider_devices:
     type: instrument
   instrument_echosounder:
     _FillValue: -999
+    long_name: Nortek Sig 100 Compact Echosounder
     make_model: Nortek Signature 100 Compact Echosounder
     serial_number: '107475'
     calibration_date: '2025-07-29'
@@ -71,7 +73,6 @@ glider_devices:
     description: Signature 100 compact echosounder for gliders
     platform: platform
     type: instrument
-    long_name: Nortek Sig 100 Compact Echosounder
   instrument_flbbcd:
     _FillValue: -999
     long_name: Optical Backscatter, Chlorophyll, and CDOM Fluorescence Sensor
@@ -86,6 +87,7 @@ glider_devices:
     type: instrument
   instrument_glidercam:
     _FillValue: -999
+    long_name: Wassoc Glidercam
     make_model: Williamson and Associates Glidercam
     serial_number: S-AUV-CM-B02
     calibration_date: ''
@@ -96,7 +98,6 @@ glider_devices:
       Webb Research 1000M Deep Gliders
     platform: platform
     type: instrument
-    long_name: Wassoc Glidercam
   instrument_oxygen:
     _FillValue: -999
     long_name: Oxygen Optode
@@ -231,15 +232,18 @@ netcdf_variables:
     source: m_heading
     long_name: glider heading angle
     standard_name: platform_orientation
+    observation_type: measured
     units: rad
   pitch:
     source: m_pitch
     long_name: glider pitch angle
+    observation_type: measured
     standard_name: platform_pitch_angle
     units: rad
   roll:
     source: m_roll
     long_name: glider roll angle
+    observation_type: measured
     standard_name: platform_roll_angle
     units: rad
   water_velocity_eastward:
