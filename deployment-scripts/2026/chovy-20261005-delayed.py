@@ -2,11 +2,11 @@ import logging
 from pathlib import Path
 
 # import esdglider.profiles as prof
-# import numpy as np
+import numpy as np
 import xarray as xr
 from esdglider.slocum import pipeline
 
-from esdglider import defaults, gcp, imagery, paths, plots, qartod
+from esdglider import defaults, gcp, imagery, paths, plots, qartod, utils
 
 logger = logging.getLogger(__name__)
 
@@ -76,6 +76,26 @@ if __name__ == "__main__":
         logger.info("Adjusting datasets, after review---------------------")
         # Correct profile indices, and make other adjustments to netCDF files
         tsraw = xr.load_dataset(outname_dict_ts["outname_tsraw"])
+        tssci = xr.load_dataset(outname_dict_ts["outname_tssci"])
+
+        # Corrections based on TS plots
+        bad_ctd_slice1 = {"time": slice("2026-10-06 13:43:06", "2026-10-06 13:44:07")}
+        for i in ["salinity", "conductivity", "density",  "potential_density"]:
+            tssci[i].loc[bad_ctd_slice1] = np.nan
+            
+        bad_ctd_slice2 = {"time": slice("2026-10-07 21:17:56", "2026-10-07 21:41:02")}
+        for i in ["salinity", "conductivity", "density",  "potential_density"]:
+            tssci[i].loc[bad_ctd_slice2] = np.nan
+
+        tssci.attrs["comment"] = utils.append_string(
+            tssci.attrs["comment"], 
+            (
+                "Removed bad data for variables salinity, conductivity, density, "
+                "and potential_density in the time windows "
+                f"({bad_ctd_slice1['time'].start}, {bad_ctd_slice1['time'].stop}) and "
+                f"({bad_ctd_slice2['time'].start}, {bad_ctd_slice2['time'].stop})"
+            )
+        )
 
         # Adjust profile index
         logger.info("Correcting profile_index for raw, eng, and sci datasets")
@@ -89,10 +109,11 @@ if __name__ == "__main__":
             {"time": slice("2026-10-08 17:03:23.5", "2026-10-08 17:05")}
         ] = 95.
 
+        # Finsih profile corrections, write modifed netCDF files to disk
         pipeline.complete_profile_correction(
             tsraw=tsraw,
             tseng=xr.load_dataset(outname_dict_ts["outname_tseng"]),
-            tssci=xr.load_dataset(outname_dict_ts["outname_tssci"]),
+            tssci=tssci,
             glider_paths=glider_paths,
         )
 

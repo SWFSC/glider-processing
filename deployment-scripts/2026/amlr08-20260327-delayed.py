@@ -5,7 +5,7 @@ import numpy as np
 import xarray as xr
 from esdglider.slocum import pipeline
 
-from esdglider import defaults, gcp, imagery, paths, plots, qartod
+from esdglider import defaults, gcp, imagery, paths, plots, qartod, utils
 
 logger = logging.getLogger(__name__)
 
@@ -70,13 +70,19 @@ if __name__ == "__main__":
         tssci = xr.load_dataset(outname_dict_ts["outname_tssci"])
 
         # Handle bad lat/lons
-        bad_ll_slice = {"time": slice('2026-03-29 10:25:30', '2026-03-29 17:31:00')}
+        ll1_start, ll1_stop = '2026-03-29 10:25:30', '2026-03-29 17:31:00'
+        bad_ll_slice = {"time": slice(ll1_start, ll1_stop)}
         tseng["latitude"].loc[bad_ll_slice] = np.nan
         tssci["latitude"].loc[bad_ll_slice] = np.nan
         tseng["longitude"].loc[bad_ll_slice] = np.nan
         tssci["longitude"].loc[bad_ll_slice] = np.nan
-
-        # TODO: add comment
+        tssci.attrs["comment"] = utils.append_string(
+            tssci.attrs["comment"], 
+            (
+                "Removed bad latitude and longitude values in the time window "
+                f"({ll1_start}, {ll1_stop})"
+            )
+        )
 
         # Adjust profile index
         logger.info("Correcting profile_index for raw, eng, and sci datasets")
@@ -88,8 +94,8 @@ if __name__ == "__main__":
         ] = 422.5
         pipeline.complete_profile_correction(
             tsraw=tsraw,
-            tseng=xr.load_dataset(outname_dict_ts["outname_tseng"]),
-            tssci=xr.load_dataset(outname_dict_ts["outname_tssci"]),
+            tseng=tseng,
+            tssci=tssci,
             glider_paths=glider_paths,
         )
 

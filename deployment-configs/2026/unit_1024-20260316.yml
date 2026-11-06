@@ -49,7 +49,10 @@ metadata:
     in the Southern California Bight off San Diego, CA, and to overlap in time and
     space with vessel sampling to enable data comparisons. Other sensors included
     a CTD, an optical sensor (ECO Puck) for chlorophyll, backscatter, and colored
-    dissolved organic matter measurements, and an oxygen sensor.
+    dissolved organic matter measurements, and an oxygen sensor. This glider was 
+    deployed along CalCOFI Line 90.0. 
+    The glider was scheduled to fly one out-and-back transect to station 90.0 45.0, 
+    and overlap with the CalCOFI vessel at station 90.0 45.0.
   transmission_system: IRIDIUM
   wmo_id: ' '
 glider_devices:

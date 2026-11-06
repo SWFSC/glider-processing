@@ -5,7 +5,7 @@ import numpy as np
 import xarray as xr
 from esdglider.slocum import pipeline
 
-from esdglider import defaults, gcp, imagery, paths, plots, qartod
+from esdglider import defaults, gcp, imagery, paths, plots, qartod, utils
 
 logger = logging.getLogger(__name__)
 
@@ -75,12 +75,36 @@ if __name__ == "__main__":
         tseng = xr.load_dataset(outname_dict_ts["outname_tseng"])
         tssci = xr.load_dataset(outname_dict_ts["outname_tssci"])
 
-        # Handle bad lat/lons. 
-        bad_ll_slice = {"time": slice('2026-04-13 01:30:00', '2026-04-13 14:30:00')}
+        # Handle bad lat/lons
+        logger.info("Removing bad lat/lons")
+        ll1_start, ll1_stop = '2026-04-13 01:30:00', '2026-04-13 14:30:00'
+        bad_ll_slice = {"time": slice(ll1_start, ll1_stop)}
         tseng["latitude"].loc[bad_ll_slice] = np.nan
         tssci["latitude"].loc[bad_ll_slice] = np.nan
         tseng["longitude"].loc[bad_ll_slice] = np.nan
         tssci["longitude"].loc[bad_ll_slice] = np.nan
+        tssci.attrs["comment"] = utils.append_string(
+            tssci.attrs["comment"], 
+            (
+                "Removed bad latitude and longitude values in the time window "
+                f"({ll1_start}, {ll1_stop})"
+            )
+        )
+
+        # Removing bad science values
+        logger.info("Removing bad science values")
+        t1_start, t1_stop = '2026-04-17 15:20:00', '2026-04-17 15:40:00'
+        bad_ctd_slice1 = {"time": slice(t1_start, t1_stop)}
+        for i in ["salinity", "conductivity", "density", "potential_density"]:
+            tssci[i].loc[bad_ctd_slice1] = np.nan
+        tssci.attrs["comment"] = utils.append_string(
+            tssci.attrs["comment"], 
+            (
+                "Removed bad data for variables salinity, conductivity, density, "
+                "and potential_density in the time window "
+                f"({t1_start}, {t1_stop})"
+            )
+        )
 
         # Adjust profile index
         logger.info("Correcting profile_index for raw, eng, and sci datasets")
