@@ -1,14 +1,12 @@
 metadata:
   acknowledgement: This work was supported by funding from NOAA Fisheries, SWFSC.
   comment: ' '
-  contributor_name: Noelle Bowlin, Steven Bograd, Andrew Leising, Heidi Taylor,
-    Jennifer Walsh, Anthony Cossio, Tegan Murray, 
-    Kourtney Burger, Cara Wilson, Samuel Woodman
-  contributor_role: Principal Investigator, Principal Investigator, 
-    Principal Investigator, Program Lead,
-    Glider Pilot, Glider Pilot, Glider Pilot,
-    Glider Pilot/Data Manager, Glider Pilot, Data Manager
-  creator_email: nmfs.swfsc.esd-gliders@noaa.gov
+  contributor_name: Noelle Bowlin, Steven Bograd, Andrew Leising, Heidi Taylor, Jennifer
+    Walsh, Anthony Cossio, Tegan Murray, Kourtney Burger, Cara Wilson, Samuel Woodman
+  contributor_role: Principal Investigator, Principal Investigator, Principal Investigator,
+    Program Lead, Glider Pilot, Glider Pilot, Glider Pilot, Glider Pilot/Data Manager,
+    Glider Pilot, Data Manager
+  creator_email: swfsc.gliderdata@noaa.gov
   creator_name: NOAA SWFSC Ecosystem Science Division Glider Team
   creator_url: https://www.fisheries.noaa.gov/about/southwest-fisheries-science-center
   deployment_name: calanus-20260403
@@ -35,14 +33,14 @@ metadata:
   os_version: '11.06'
   platform_type: Slocum Glider
   project: CalCOFI Survey Augmentation
-  publisher_email: nmfs.swfsc.esd-gliders@noaa.gov
+  publisher_email: swfsc.gliderdata@noaa.gov
   publisher_name: NOAA SWFSC Ecosystem Science Division Glider Team
   publisher_url: https://www.fisheries.noaa.gov/about/southwest-fisheries-science-center
   references: https://swfsc.github.io/glider-lab-manual/, https://github.com/c-proof/pyglider,
     https://github.com/SWFSC/esdglider
   sea_name: Coastal Waters of California
   source: Observational data from a profiling glider
-  start_date: '2026-04-03 17:36'
+  start_date: 2026-04-03 17:36
   summary: These data are part of the NOAA Ecosystem Science Division CalCOFI Operation.
     The main objective of this deployment was to use a new Shadowgraph model (SG-V3,
     Williamson & Associates (Wassoc)) to obtain imagery of the plankton community
