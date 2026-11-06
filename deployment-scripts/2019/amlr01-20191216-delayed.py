@@ -11,7 +11,7 @@ from esdglider import aa, defaults, gcp, paths, plots, qartod
 logger = logging.getLogger(__name__)
 
 ### Variables for user to update
-deployment_name = "amlr01-20191206"    # "amlr08-20220513"
+deployment_name = "amlr01-20191216"    # "amlr08-20220513"
 mode = "delayed"        # "delayed" or "rt"
 write_nc = True         # Write NC files?
 sci_use_m_depth = False # Use m_depth for science depth?
@@ -130,18 +130,13 @@ if __name__ == "__main__":
 
     # --------------------------------------------------------------------------
     ### Plots
-    logger.info("Generating plots---------------------")    
-    plots.sci_surface_map_loop(
-        xr.load_dataset(outname_dict["outname_gr5m"]),
+    logger.info("Generating plots---------------------")
+    plots.esd_all_plots(
+        outname_dict, 
         crs="Mercator",
         base_path=glider_paths["plotdir"],
         figsize_x=11,
         figsize_y=8.5,
-    )
-    plots.esd_all_plots(
-        outname_dict, 
-        crs=None, 
-        base_path=glider_paths["plotdir"], 
     )
 
     #--------------------------------------------------------------------------

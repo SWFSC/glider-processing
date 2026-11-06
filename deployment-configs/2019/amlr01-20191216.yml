@@ -9,7 +9,7 @@ metadata:
   creator_email: swfsc.gliderdata@noaa.gov
   creator_name: NOAA U.S. Antarctic Marine Living Resources Program
   creator_url: https://www.fisheries.noaa.gov/about/southwest-fisheries-science-center
-  deployment_name: amlr01-20191206
+  deployment_name: amlr01-20191216
   format_version: IOOS_Glider_NetCDF_v2.0.nc
   glider_instrument_name: slocum
   glider_model: Teledyne Webb Research Slocum G3 glider
