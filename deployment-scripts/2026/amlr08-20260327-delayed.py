@@ -76,6 +76,8 @@ if __name__ == "__main__":
         tseng["longitude"].loc[bad_ll_slice] = np.nan
         tssci["longitude"].loc[bad_ll_slice] = np.nan
 
+        # TODO: add comment
+
         # Adjust profile index
         logger.info("Correcting profile_index for raw, eng, and sci datasets")
         tsraw["profile_index"].loc[
@@ -100,14 +102,6 @@ if __name__ == "__main__":
             output_file=outname_dict_ts["outname_tssci"],
             overwrite_qc=True
         )
-    
-        logger.info("Generating profile netCDF files---------------------")
-        pipeline.create_ngdac_profiles(
-            inname=outname_dict_ts["outname_tssci"],
-            outdir=glider_paths["ngdacdir"],
-            deploymentyaml=glider_paths["deploymentyaml"],
-            force=True,
-        )
 
     logger.info("Generating gridded netCDF files---------------------")
     outname_dict_gr = pipeline.generate_gridded(
@@ -126,7 +120,6 @@ if __name__ == "__main__":
     gcp.gcs_mount_bucket(defaults.BUCKET_IMAGERY_META, img_paths["imagery_meta_path"], ro=True)
     imagery.imagery_timeseries(tssci, img_paths)
 
-    
     #--------------------------------------------------------------------------
     ### Plots
     logger.info("Generating plots---------------------")
@@ -137,6 +130,17 @@ if __name__ == "__main__":
         base_path=glider_paths["plotdir"],
         bar_file=str(etopo_path),
     )
+
+    #--------------------------------------------------------------------------
+    ## Profile files to the IOOS NGDAC
+    if write_nc:    
+        logger.info("Generating profile netCDF files---------------------")
+        pipeline.create_ngdac_profiles(
+            inname=outname_dict_ts["outname_tssci"],
+            outdir=glider_paths["ngdacdir"],
+            deploymentyaml=glider_paths["deploymentyaml"],
+            force=True,
+        )
 
     #--------------------------------------------------------------------------
     logger.info("Completed scheduled processing")

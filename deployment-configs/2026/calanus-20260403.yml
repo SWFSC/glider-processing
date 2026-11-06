@@ -1,10 +1,11 @@
 metadata:
   acknowledgement: This work was supported by funding from NOAA Fisheries, SWFSC.
-  comment: Glider deployed and recovered on schedule with no mission issues or problems.
-  contributor_name: Noelle Bowlin, Steven Bograd, Andrew Leising, Heidi Taylor (PL),
+  comment: ' '
+  contributor_name: Noelle Bowlin, Steven Bograd, Andrew Leising, Heidi Taylor,
     Jennifer Walsh, Anthony Cossio, Tegan Murray, 
     Kourtney Burger, Cara Wilson, Samuel Woodman
-  contributor_role: Principal Investigator, Principal Investigator, Principal Investigator, Program Lead,
+  contributor_role: Principal Investigator, Principal Investigator, 
+    Principal Investigator, Program Lead,
     Glider Pilot, Glider Pilot, Glider Pilot,
     Glider Pilot/Data Manager, Glider Pilot, Data Manager
   creator_email: nmfs.swfsc.esd-gliders@noaa.gov
@@ -41,9 +42,9 @@ metadata:
     https://github.com/SWFSC/esdglider
   sea_name: Coastal Waters of California
   source: Observational data from a profiling glider
-  start_date: 20260403T173632
+  start_date: '2026-04-03 17:36'
   summary: These data are part of the NOAA Ecosystem Science Division CalCOFI Operation.
-    The main objective of this deployment was to use a new Shadowgraph model (SG-V3-02,
+    The main objective of this deployment was to use a new Shadowgraph model (SG-V3,
     Williamson & Associates (Wassoc)) to obtain imagery of the plankton community
     in the Southern California Bight off San Diego, CA, and to overlap in time and
     space with vessel sampling to enable data comparisons. Other sensors included

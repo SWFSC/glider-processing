@@ -80,20 +80,42 @@ if __name__ == "__main__":
     #     pipeline.correct_flbbcd_raw_sci(glider_paths=glider_paths)
     #     pipeline.correct_cdom_raw_sci(glider_paths=glider_paths)
 
-    # if write_nc:      #IF NECESSARY
-    #     logger.info("Adjusting datasets, after review---------------------")
-    #     # Correct profile indices, and make other adjustments to netCDF files
-    #     tsraw = xr.load_dataset(outname_dict_ts["outname_tsraw"])
-    #     # Adjust profile index
-    #     logger.info("Correcting profile_index for raw, eng, and sci datasets")
-    #     tsraw["profile_index"].loc[{"time": "2024-11-13 15:14:59"}] = 590.5
-    #     tsraw["profile_index"].loc[
-    #         {"time": slice("2026-02-01 09:05", "2026-02-01 09:16:10")}
-    #     ] = 397
+    if write_nc:      #IF NECESSARY
+        logger.info("Adjusting datasets, after review---------------------")
+        # Correct profile indices, and make other adjustments to netCDF files
+        tsraw = xr.load_dataset(outname_dict_ts["outname_tsraw"])
+        tseng = xr.load_dataset(outname_dict_ts["outname_tseng"])
+        tssci = xr.load_dataset(outname_dict_ts["outname_tssci"])
+
+        # Adjust profile index
+        logger.info("Correcting profile_index for raw, eng, and sci datasets")
+        tsraw["profile_index"].loc[{"time": "2024-11-13 15:14:59"}] = 590.5
+        tsraw["profile_index"].loc[
+            {"time": slice("2026-02-01 09:05", "2026-02-01 09:16:10")}
+        ] = 397
+
+        # Removal of bad CTD data based on TS plots
+        bad_ctd_slice1 = {"time": slice("2026-10-06 13:43:06", "2026-10-06 13:44:07")}
+        for i in ["salinity", "conductivity", "density",  "potential_density"]:
+            tssci[i].loc[bad_ctd_slice1] = np.nan
+
+        bad_ll_slice = {"time": slice('2026-04-13 01:30:00', '2026-04-13 14:30:00')}
+        tseng["latitude"].loc[bad_ll_slice] = np.nan
+        tssci["latitude"].loc[bad_ll_slice] = np.nan
+        tseng["longitude"].loc[bad_ll_slice] = np.nan
+        tssci["longitude"].loc[bad_ll_slice] = np.nan
+
+    #     # Removal of bad lat/lons based on maps
+    #     tssci = xr.load_dataset(outname_dict_ts["outname_tssci"])
+    #     bad_ctd_slice1 = {"time": slice("2026-10-06 13:43:06", "2026-10-06 13:44:07")}
+    #     for i in ["salinity", "conductivity", "density",  "potential_density"]:
+    #         tssci[i].loc[bad_ctd_slice1] = np.nan
+
+    #     # Complete profile correction, and save modifed netCDFs
     #     pipeline.complete_profile_correction(
     #         tsraw=tsraw,
-    #         tseng=xr.load_dataset(outname_dict_ts["outname_tseng"]),
-    #         tssci=xr.load_dataset(outname_dict_ts["outname_tssci"]),
+    #         tseng=tseng,
+    #         tssci=tssci,
     #         glider_paths=glider_paths,
     #     )
 
