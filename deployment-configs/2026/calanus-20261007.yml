@@ -1,14 +1,14 @@
 metadata:
   acknowledgement: This work was supported by funding from NOAA Fisheries, SWFSC.
   comment: ' '
-  contributor_name: Ryan Rykaczewski, Steven Bograd, Noelle Bowlin, Michael Jacox,
-    Douglas Krause, Andrew Leising, Heidi Taylor, Jennifer Walsh, Anthony Cossio,
-    Greta O'Dea, Tegan Murray, Kourtney Burger, Cara Wilson, Jacob Partida, Samuel
-    Woodman
-  contributor_role: Principal Investigator, Principal Investigator, Principal Investigator,
-    Principal Investigator, Principal Investigator, Principal Investigator, Program
-    Lead, Glider Pilot, Glider Pilot, Glider Pilot, Glider Pilot, Glider Pilot/Data
-    Manager, Glider Pilot, Glider Pilot, Data Manager
+  contributor_name: "Ryan Rykaczewski, Steven Bograd, Noelle Bowlin, Michael Jacox, 
+    Douglas Krause, Andrew Leising, Heidi Taylor, 
+    Jennifer Walsh, Anthony Cossio, Greta O'Dea, Tegan Murray, 
+    Kourtney Burger, Cara Wilson, Jacob Partida, Samuel Woodman"
+  contributor_role: Principal Investigator, Principal Investigator, Principal Investigator, Principal Investigator, 
+    Principal Investigator, Principal Investigator, Program Lead, 
+    Glider Pilot, Glider Pilot, Glider Pilot, Glider Pilot, 
+    Glider Pilot/Data Manager, Glider Pilot, Glider Pilot, Data Manager
   creator_email: swfsc.gliderdata@noaa.gov
   creator_name: NOAA SWFSC Ecosystem Science Division Glider Team
   creator_url: https://www.fisheries.noaa.gov/about/southwest-fisheries-science-center
