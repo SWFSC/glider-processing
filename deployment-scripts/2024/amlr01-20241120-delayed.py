@@ -1,12 +1,12 @@
 import logging
-import os
 from pathlib import Path
 
+import esdglider.profiles as prof
 import numpy as np
 import xarray as xr
 from esdglider.slocum import pipeline
 
-from esdglider import defaults, gcp, imagery, paths, plots, qartod
+from esdglider import aa, defaults, gcp, paths, plots, qartod
 
 logger = logging.getLogger(__name__)
 
@@ -62,6 +62,12 @@ if __name__ == "__main__":
         prof_args=prof_args,
     )
 
+    if write_nc:      #IF NECESSARY
+        logger.info("Correcting data---------------------")
+        # Recalculate flbbcd values and correct cdom
+        pipeline.correct_flbbcd_raw_sci(glider_paths=glider_paths)
+        pipeline.correct_cdom_raw_sci(glider_paths=glider_paths)
+
     if write_nc:
         logger.info("Adjusting datasets, after review---------------------")
         # Correct profile indices, and make other adjustments to netCDF files
@@ -74,96 +80,77 @@ if __name__ == "__main__":
         # This timestamp was breaking profile calculations, and parameters
         # could not be tuned to handle both this timestamp and rest of data
         # We run eng and sci timeseries through this function as well for simplicity
-        time_toremove = "2024-12-13 03:24:07.488281344"
-        tsraw = glider.drop_ts_ranges(
-            tsraw, 
-            drop_list=[(time_toremove, time_toremove)], 
-            dstype="raw", 
-            profsummdir=paths["profsummpath"], 
-            outname=outname_dict["outname_tsraw"], 
-            stall = stall_int,
+        
+        logger.info("Removing bogus points from raw and eng datasets")
+        t1 = np.datetime64("2024-12-13 03:24:07.488281344")
+        
+        keep_raw = (tsraw["time"] != t1)
+        tsraw = tsraw.sel(time=keep_raw)
+
+        keep_eng = (tseng["time"] != t1)
+        tseng = tseng.sel(time=keep_eng)
+
+        keep_sci = (tssci["time"] != t1)
+        tssci = tssci.sel(time=keep_sci)
+
+        logger.info("Rerun profiles")
+        tsraw = prof.get_fill_profiles(tsraw, "time", "m_depth", prof_args)
+
+        pipeline.complete_profile_correction(
+            tsraw=tsraw,
+            tseng=tseng,
+            tssci=tssci,
+            glider_paths=glider_paths,
         )
-        logging.info("eng")
-        tseng = glider.drop_ts_ranges(
-            tseng, 
-            drop_list=[(time_toremove, time_toremove)], 
-            dstype="eng", 
-            profsummdir=paths["profsummpath"], 
-            outname=outname_dict["outname_tseng"], 
-        )
-        logging.info("sci")
-        tssci = glider.drop_ts_ranges(
-            tssci, 
-            drop_list = [(time_toremove, time_toremove)], 
-            dstype="sci", 
-            profsummdir=paths["profsummpath"], 
-            outname=outname_dict["outname_tssci"], 
-        )
-
-        # time_toremove = np.datetime64("2024-12-13 03:24:07.488281344")
-        # logging.info(
-        #     "Dropping %s points from the raw dataset, for profile calcs", 
-        #     np.count_nonzero(tsraw.time.values == time_toremove)
-        # )
-
-        # # Calculate new profiles for raw dataset
-        # tsraw = tsraw.sel(time=(tsraw.time != time_toremove))
-        # tsraw = utils.get_fill_profiles(tsraw, tsraw.time.values, tsraw.depth.values, **kwargs)
-        # prof_summ = utils.calc_profile_summary(tsraw)
-        # prof_summ.to_csv(paths["profsummpath"], index=False)
-
-        # 'Calculate', ie join, profiles for eng and sci timeseries
-        # tseng = utils.join_profiles(tseng, prof_summ, **kwargs)
-        # tssci = utils.join_profiles(tssci, prof_summ, **kwargs)
-
-        # # Profile checks
-        # utils.check_profiles(tsraw)
-        # utils.check_profiles(tseng)
-        # utils.check_profiles(tssci)
-
-        # # Write to Netcdf, and rerun gridding
-        # logging.info("Write timeseries to netcdf")
-        # utils.to_netcdf_esd(tsraw, outname_dict["outname_tsraw"])
-        # utils.to_netcdf_esd(tseng, outname_dict["outname_tseng"])
-        # utils.to_netcdf_esd(tssci, outname_dict["outname_tssci"])
         del tsraw, tssci, tseng
 
-        logging.info("Gridding corrected science data")
-        outname_dict = glider.binary_to_nc(
-            deployment_info=deployment_info,
-            paths=paths,
-            write_raw=False,
-            write_timeseries=False,
-            write_gridded=True,
-            file_info=file_info,
-        )        
+    # Using science netCDF files, after any corrections:
+    if write_nc:
+        logger.info("Generating qc flags---------------------")
+        qartod.run_qartod_qc(
+            input_file=outname_dict_ts["outname_tssci"],
+            output_file=outname_dict_ts["outname_tssci"],
+            overwrite_qc=True
+        )
 
-    plots.esd_all_plots(outname_dict, crs=None, base_path=paths["plotdir"])
-    plots.sci_surface_map_loop(
-        xr.load_dataset(outname_dict["outname_gr5m"]),
+    logger.info("Generating gridded netCDF files---------------------")
+    outname_dict_gr = pipeline.generate_gridded(
+        glider_paths=glider_paths,
+        write_gridded=write_nc,
+    )
+
+    outname_dict = outname_dict_ts | outname_dict_gr
+
+
+    #--------------------------------------------------------------------------
+    ### Ancillary data products
+    tssci = xr.load_dataset(outname_dict["outname_tssci"])
+
+    logger.info("Active Acoustics---------------------")
+    aa_paths = paths.get_path_aa(deployment_name, mode, home_path=home)
+    aa.ancillary_echoview(tssci, aa_paths)
+    
+    # --------------------------------------------------------------------------
+    ### Plots
+    logger.info("Generating plots---------------------")
+    plots.esd_all_plots(
+        outname_dict, 
         crs="Mercator",
-        base_path=paths["plotdir"],
+        base_path=glider_paths["plotdir"],
         figsize_x=11,
         figsize_y=8.5,
     )
 
-    ### Sensor-specific processing
-    tssci = xr.load_dataset(outname_dict["outname_tssci"])
+    #--------------------------------------------------------------------------
+    ### Profile files to the IOOS NGDAC
+    # if write_nc:    
+    #     logger.info("Generating profile netCDF files---------------------")
+    #     pipeline.create_ngdac_profiles(
+    #         inname=outname_dict_ts["outname_tssci"],
+    #         outdir=glider_paths["ngdacdir"],
+    #         deploymentyaml=glider_paths["deploymentyaml"],
+    #         force=True,
+    #     )
 
-    # Acoustics
-    a_paths = acoustics.get_path_acoustics(deployment_info, acoustics_path)
-    acoustics.echoview_metadata(tssci, a_paths)
-
-    # Imagery
-    # i_paths = imagery.get_path_imagery(deployment_info, imagery_raw_path)
-    # imagery.imagery_timeseries(tssci, i_paths)
-
-    # ### Generate profile netCDF files for the DAC
-    # glider.ngdac_profiles(
-    #     outname_dict["outname_tssci"], 
-    #     paths['profdir'], 
-    #     paths['deploymentyaml'],
-    #     force=True, 
-    # )
-
-    logging.info("Completed scheduled processing")
+    # --------------------------------------------------------------------------
+    logger.info("Completed scheduled processing")
