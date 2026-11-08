@@ -15,7 +15,7 @@ from esdglider import aa, defaults, gcp, imagery, paths, plots, qartod
 logger = logging.getLogger(__name__)
 
 ### Variables for user to update
-deployment_name = "amlr01-20181216"    # "amlr08-20220513"
+deployment_name = "amlr04-20231128"    # "amlr08-20220513"
 mode = "delayed"        # "delayed" or "rt"
 write_nc = True         # Write NC files?
 sci_use_m_depth = False # Use m_depth for science depth?
@@ -83,7 +83,7 @@ if __name__ == "__main__":
         # The bogus points appears to be because the science computer reset, 
         # which took eg3 minutes, and this point logged the previous values 
         # before collecting new ones. No need to rerun profiles, etc. See:
-        # 'glider-lab/deployment-scripts/notebooks/amlr04-20231128-delayed.ipynb'
+        # 'glider-processing/deployment-scripts/2023/amlr04-20231128-delayed.ipynb'
         times_todrop = np.array([
             '2023-11-28T22:10:49.251434240', '2023-11-29T06:10:54.020294144',
             '2023-11-29T15:33:10.920379648', '2023-11-29T23:54:31.435516416',
@@ -166,7 +166,7 @@ if __name__ == "__main__":
         # utils.to_netcdf_esd(tssci, outname_dict["outname_tssci"])
         tssci.to_netcdf(
             outname_dict_ts["outname_tssci"], 
-            encoding=core.TIME_ENCODING
+            encoding={'time': core.TIME_ENCODING}
         )   
 
         del tssci
