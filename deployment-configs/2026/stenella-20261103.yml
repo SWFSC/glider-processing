@@ -12,7 +12,7 @@ metadata:
   creator_email: swfsc.gliderdata@noaa.gov
   creator_name: NOAA SWFSC Ecosystem Science Division Glider Team
   creator_url: https://www.fisheries.noaa.gov/about/southwest-fisheries-science-center
-   deployment_name: stenella-20261103
+  deployment_name: stenella-20261103
   format_version: IOOS_Glider_NetCDF_v2.0.nc
   glider_instrument_name: slocum
   glider_model: Teledyne Webb Research Slocum G3 glider
@@ -43,7 +43,7 @@ metadata:
     https://github.com/SWFSC/esdglider
   sea_name: Coastal Waters of California
   source: Observational data from a profiling glider
-  start_date: 2026-10-07 17:53
+  start_date: 2026-11-03 19:58
   summary: "This glider was deployed as the fifth of several month-long deployments\
     \ as part of a targeted sampling program to monitor the evolution and ecosystem\
     \ impacts of a predicted \"very strong\" El Ni\xF1o. It was deployed along CalCOFI\
