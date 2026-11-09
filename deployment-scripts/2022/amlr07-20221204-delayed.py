@@ -13,7 +13,7 @@ logger = logging.getLogger(__name__)
 ### Variables for user to update
 deployment_name = "amlr07-20221204"    # "amlr08-20220513"
 mode = "delayed"        # "delayed" or "rt"
-write_nc = False         # Write NC files?
+write_nc = True         # Write NC files?
 sci_use_m_depth = False # Use m_depth for science depth?
 prof_args = {}          # Named optional parameters for finding profiles
 
@@ -48,7 +48,9 @@ if __name__ == "__main__":
     gcp.gcs_mount_bucket(defaults.BUCKET_DATA_IN, glider_paths["data_in_path"], ro=True)
     gcp.gcs_mount_bucket(defaults.BUCKET_DATA_OUT, glider_paths["data_out_path"], ro=False)
 
-    glider_paths["binarydir"] = "/home/user/amlr07-20221204/binary"
+    glider_paths["binarydir"] = f"{glider_paths['indir']}/binary/combined"
+    # glider_paths["binarydir"] = "/home/user/amlr07-20221204/binary"
+    
 
     #--------------------------------------------------------------------------
     ### Timeseries and gridded netCDF generation
