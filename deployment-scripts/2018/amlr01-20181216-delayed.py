@@ -122,17 +122,12 @@ if __name__ == "__main__":
     # --------------------------------------------------------------------------
     ### Plots
     logger.info("Generating plots---------------------")
-    plots.sci_surface_map_loop(
-        xr.load_dataset(outname_dict["outname_gr5m"]),
+    plots.esd_all_plots(
+        outname_dict, 
         crs="Mercator",
         base_path=glider_paths["plotdir"],
         figsize_x=11,
         figsize_y=8.5,
-    )
-    plots.esd_all_plots(
-        outname_dict, 
-        crs=None, 
-        base_path=glider_paths["plotdir"], 
     )
 
     #--------------------------------------------------------------------------
@@ -144,12 +139,6 @@ if __name__ == "__main__":
     #         outdir=glider_paths["ngdacdir"],
     #         deploymentyaml=glider_paths["deploymentyaml"],
     #         force=True,
-    #     )
-
-    #     logger.info("Syncing profile netCDF files to NGDAC---------------------")
-    #     pipeline.sync_to_ngdac(
-    #         local_dir=glider_paths["ngdacdir"], 
-    #         dry_run=True, 
     #     )
 
     #--------------------------------------------------------------------------

@@ -1,10 +1,11 @@
 import logging
 from pathlib import Path
 
+import numpy as np
 import xarray as xr
-from esdglider.slocum import pipeline
+from esdglider.slocum import core, pipeline
 
-from esdglider import defaults, gcp, imagery, paths, plots, qartod
+from esdglider import defaults, gcp, imagery, paths, plots, qartod, utils
 
 logger = logging.getLogger(__name__)
 
@@ -63,12 +64,31 @@ if __name__ == "__main__":
         prof_args = profile_args, 
     )
 
-    ### Make any adjustments to netCDF files
-    # if write_nc:
-    #     logging.info("Adjusting datasets, after review")
-    #     tsraw = xr.load_dataset(outname_dict["outname_tsraw"])
-    #     tseng = xr.load_dataset(outname_dict["outname_tseng"])
-    #     tssci = xr.load_dataset(outname_dict["outname_tssci"])
+    if write_nc:      #IF NECESSARY
+        logger.info("Adjusting datasets, after review---------------------")
+        # Correct profile indices, and make other adjustments to netCDF files
+        tssci = xr.load_dataset(outname_dict_ts["outname_tssci"])
+
+        # Removing bad science values
+        logger.info("Removing bad science values")
+        t1_start, t1_stop = "2026-03-25 08:55:26", "2026-03-25 08:56:09"
+        bad_ctd_slice1 = {"time": slice(t1_start, t1_stop)}
+        for i in ["salinity", "conductivity", "density", "potential_density"]:
+            tssci[i].loc[bad_ctd_slice1] = np.nan
+
+        tssci.attrs["comment"] = utils.append_string(
+            tssci.attrs["comment"], 
+            (
+                "Removed bad data for variables salinity, conductivity, density, "
+                "and potential_density in the time window "
+                f"({t1_start}, {t1_stop})"
+            )
+        )
+        tssci.to_netcdf(
+            outname_dict_ts["outname_tssci"], 
+            encoding={'time': core.TIME_ENCODING}
+        )
+            
 
     
     # Create qc variables for science netCDF files, after corrections

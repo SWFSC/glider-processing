@@ -1,13 +1,12 @@
 metadata:
   acknowledgement: This work was supported by funding from NOAA Fisheries, SWFSC.
   comment: glider dropped its emergency weight and was recovered early
-  contributor_name: Douglas Krause, Christian Reiss, Heidi Taylor, 
-    Jennifer Walsh, Anthony Cossio, Tegan Murray, 
-    Kourtney Burger, Cara Wilson, Samuel Woodman
-  contributor_role: Principal Investigator, Principal Investigator, Program Lead, 
-    Glider Pilot, Glider Pilot, Glider Pilot,
-    Glider Pilot/Data Manager, Glider Pilot, Data Manager
-  creator_email: nmfs.swfsc.esd-gliders@noaa.gov
+  contributor_name: Douglas Krause, Christian Reiss, Heidi Taylor, Jennifer Walsh,
+    Anthony Cossio, Tegan Murray, Kourtney Burger, Cara Wilson, Samuel Woodman
+  contributor_role: Principal Investigator, Principal Investigator, Program Lead,
+    Glider Pilot, Glider Pilot, Glider Pilot, Glider Pilot/Data Manager, Glider Pilot,
+    Data Manager
+  creator_email: swfsc.gliderdata@noaa.gov
   creator_name: NOAA SWFSC Ecosystem Science Division Glider Team
   creator_url: https://www.fisheries.noaa.gov/about/southwest-fisheries-science-center
   deployment_name: amlr30-20260114
@@ -31,10 +30,10 @@ metadata:
     Dedication (CC0-1.0, https://creativecommons.org/publicdomain/zero/1.0/).
   metadata_link: https://swfsc.github.io/glider-lab-manual/
   naming_authority: gov.noaa.fisheries
-  os_version: '11.04' 
+  os_version: '11.04'
   platform_type: Slocum Glider
-  project: "FREEBYRD: Estimate Antarctic krill biomass in support of CCAMLR"
-  publisher_email: nmfs.swfsc.esd-gliders@noaa.gov
+  project: 'FREEBYRD: Estimate Antarctic krill biomass in support of CCAMLR'
+  publisher_email: swfsc.gliderdata@noaa.gov
   publisher_name: NOAA SWFSC Ecosystem Science Division Glider Team
   publisher_url: https://www.fisheries.noaa.gov/about/southwest-fisheries-science-center
   references: https://swfsc.github.io/glider-lab-manual/, https://github.com/c-proof/pyglider,

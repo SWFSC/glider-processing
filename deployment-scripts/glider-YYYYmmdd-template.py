@@ -6,7 +6,7 @@ from pathlib import Path
 # import xarray as xr
 from esdglider.slocum import pipeline, rt
 
-from esdglider import aa, defaults, gcp, imagery, paths, plots, qartod
+from esdglider import aa, defaults, gcp, imagery, paths, plots, qartod, utils
 
 logger = logging.getLogger(__name__)
 
@@ -84,16 +84,64 @@ if __name__ == "__main__":
     #     logger.info("Adjusting datasets, after review---------------------")
     #     # Correct profile indices, and make other adjustments to netCDF files
     #     tsraw = xr.load_dataset(outname_dict_ts["outname_tsraw"])
+    #     tseng = xr.load_dataset(outname_dict_ts["outname_tseng"])
+    #     tssci = xr.load_dataset(outname_dict_ts["outname_tssci"])
+
+    #     # Removal of bad lat/lons
+    #     logger.info("Removing bad lat/lons")
+    #     ll1_start, ll1_stop = '2026-04-13 01:30:00', '2026-04-13 14:30:00'
+    #     bad_ll_slice = {"time": slice(ll1_start, ll1_stop)}
+    #     tseng["latitude"].loc[bad_ll_slice] = np.nan
+    #     tssci["latitude"].loc[bad_ll_slice] = np.nan
+    #     tseng["longitude"].loc[bad_ll_slice] = np.nan
+    #     tssci["longitude"].loc[bad_ll_slice] = np.nan
+    #     tssci.attrs["comment"] = utils.append_string(
+    #         tssci.attrs["comment"], 
+    #         (
+    #             "Removed bad latitude and longitude values in the time window "
+    #             f"({ll1_start}, {ll1_stop})"
+    #         )
+    #     )
+
+    #     # Removing bad science values
+    #     logger.info("Removing bad science values")
+    #     t1_start, t1_stop = "2026-10-06 13:43:06", "2026-10-06 13:44:07"
+    #     bad_ctd_slice1 = {"time": slice(t1_start, t1_stop)}
+    #     for i in ["salinity", "conductivity", "density", "potential_density"]:
+    #         tssci[i].loc[bad_ctd_slice1] = np.nan
+            
+    #     t2_start, t2_stop = "2026-10-07 21:17:56", "2026-10-07 21:41:02"
+    #     bad_ctd_slice2 = {"time": slice(t2_start, t2_stop)}
+    #     for i in ["salinity", "conductivity", "density", "potential_density"]:
+    #         tssci[i].loc[bad_ctd_slice2] = np.nan
+
+    #     tssci.attrs["comment"] = utils.append_string(
+    #         tssci.attrs["comment"], 
+    #         (
+    #             "Removed bad data for variables salinity, conductivity, density, "
+    #             "and potential_density in the time windows "
+    #             f"({t1_start}, {t1_stop}) and ({t2_start}, {t2_stop})"
+    #         )
+    #     )
+
+    #     # Write to NetCDF, if not writing through profile correction
+    #     tssci.to_netcdf(
+    #         outname_dict_ts["outname_tssci"], 
+    #         encoding={'time': core.TIME_ENCODING}
+    #     )
+
     #     # Adjust profile index
-    #     logger.info("Correcting profile_index for raw, eng, and sci datasets")
+    #     logger.info("Correcting profile_indices")
     #     tsraw["profile_index"].loc[{"time": "2024-11-13 15:14:59"}] = 590.5
     #     tsraw["profile_index"].loc[
     #         {"time": slice("2026-02-01 09:05", "2026-02-01 09:16:10")}
     #     ] = 397
+
+    #     # Complete profile correction, and save modifed netCDFs
     #     pipeline.complete_profile_correction(
     #         tsraw=tsraw,
-    #         tseng=xr.load_dataset(outname_dict_ts["outname_tseng"]),
-    #         tssci=xr.load_dataset(outname_dict_ts["outname_tssci"]),
+    #         tseng=tseng,
+    #         tssci=tssci,
     #         glider_paths=glider_paths,
     #     )
 
@@ -140,17 +188,12 @@ if __name__ == "__main__":
     #     bar_file=str(etopo_path),
     # )
     # ## OR, for Antarctic ##
-    # plots.sci_surface_map_loop(
-    #     xr.load_dataset(outname_dict["outname_gr5m"]),
+    # plots.esd_all_plots(
+    #     outname_dict, 
     #     crs="Mercator",
     #     base_path=glider_paths["plotdir"],
     #     figsize_x=11,
     #     figsize_y=8.5,
-    # )
-    # plots.esd_all_plots( #second so combine_pdf catches surface maps
-    #     outname_dict, 
-    #     crs=None, 
-    #     base_path=glider_paths["plotdir"], 
     # )
 
     #--------------------------------------------------------------------------

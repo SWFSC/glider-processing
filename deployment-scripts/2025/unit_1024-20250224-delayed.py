@@ -2,7 +2,7 @@ import logging
 from pathlib import Path
 
 import xarray as xr
-from esdglider.slocum import pipeline
+from esdglider.slocum import core, pipeline
 
 from esdglider import defaults, gcp, paths, plots, qartod, utils
 
@@ -62,7 +62,10 @@ if __name__ == "__main__":
         logger.info("Adjusting datasets, after review---------------------")
         tssci = xr.load_dataset(outname_dict_ts["outname_tssci"])
         # tssci = utils.correct_par(tssci)
-        tssci.to_netcdf(outname_dict_ts["outname_tssci"])   
+        tssci.to_netcdf(
+            outname_dict_ts["outname_tssci"], 
+            encoding={'time': core.TIME_ENCODING}
+        )   
 
     # Create qc variables for science netCDF files, after corrections
     if write_nc:

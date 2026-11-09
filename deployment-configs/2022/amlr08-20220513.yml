@@ -1,11 +1,11 @@
 metadata:
   acknowledgement: This work was supported by funding from NOAA Fisheries, SWFSC.
   comment: ' '
-  contributor_name: Christian Reiss, George Watters, George Cutter, 
-    Jennifer Walsh, Anthony Cossio, Samuel Woodman
-  contributor_role: Principal Investigator, Principal Investigator, Principal Investigator/Glider Pilot,
-    Glider Pilot, Glider Pilot, Data Manager
-  creator_email: nmfs.swfsc.esd-gliders@noaa.gov
+  contributor_name: Christian Reiss, George Watters, George Cutter, Jennifer Walsh,
+    Anthony Cossio, Samuel Woodman
+  contributor_role: Principal Investigator, Principal Investigator, Principal Investigator/Glider
+    Pilot, Glider Pilot, Glider Pilot, Data Manager
+  creator_email: swfsc.gliderdata@noaa.gov
   creator_name: NOAA U.S. Antarctic Marine Living Resources Program
   creator_url: https://www.fisheries.noaa.gov/about/southwest-fisheries-science-center
   deployment_name: amlr08-20220513
@@ -32,7 +32,7 @@ metadata:
   os_version: '10.6'
   platform_type: Slocum Glider
   project: SANDIEGO
-  publisher_email: nmfs.swfsc.esd-gliders@noaa.gov
+  publisher_email: swfsc.gliderdata@noaa.gov
   publisher_name: NOAA SWFSC Ecosystem Science Division Glider Team
   publisher_url: https://www.fisheries.noaa.gov/about/southwest-fisheries-science-center
   references: https://swfsc.github.io/glider-lab-manual/, https://github.com/c-proof/pyglider,
@@ -40,9 +40,9 @@ metadata:
   sea_name: Coastal Waters of California
   source: Observational data from a profiling glider
   start_date: 20220513T185655
-  summary: This was a short test deployment off San Diego by the 
-    NOAA SWFSC U.S. Antarctic Marine Living Resources Program
-    to test a new WASSOC shadowgraph and Nortek compact echosounder.
+  summary: This was a short test deployment off San Diego by the NOAA SWFSC U.S. Antarctic
+    Marine Living Resources Program to test a new WASSOC shadowgraph and Nortek compact
+    echosounder.
   transmission_system: IRIDIUM
   wmo_id: ' '
 glider_devices:
