@@ -1,0 +1,4 @@
+# Test config to see whether the run records work with GCS DAG permissions
+deployment_name: amlr04-20230620
+dag:
+  model_type: andy-6d-v1-detector-model
