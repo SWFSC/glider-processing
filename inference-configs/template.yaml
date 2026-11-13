@@ -1,0 +1,7 @@
+# Copy into the deployment's year folder, then replace the deployment and model.
+# deployment_name must use the real glider name and an eight-digit YYYYMMDD date.
+deployment_name: glider-YYYYMMDD
+
+dag:
+  # Replace with the approved model ID for your data.
+  model_type: CHOOSE_MODEL
