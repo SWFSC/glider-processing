@@ -56,7 +56,7 @@ metadata:
     \ gaps between scheduled ship surveys, assess how marine heatwaves modify El Ni\xF1\
     o impacts, verify ocean models, and inform dynamic ocean management frameworks."
   transmission_system: IRIDIUM
-  wmo_id: ' '
+  wmo_id: '8901247'
 glider_devices:
   instrument_ctd:
     _FillValue: -999

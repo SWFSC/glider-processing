@@ -6,7 +6,7 @@ from pathlib import Path
 # import xarray as xr
 from esdglider.slocum import pipeline, rt
 
-from esdglider import aa, defaults, gcp, imagery, paths, plots, qartod
+from esdglider import defaults, gcp, paths, plots, qartod
 
 logger = logging.getLogger(__name__)
 
