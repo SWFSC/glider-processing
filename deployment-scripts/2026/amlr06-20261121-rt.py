@@ -1,0 +1,229 @@
+import logging
+from pathlib import Path
+
+# import esdglider.profiles as prof
+# import numpy as np
+# import xarray as xr
+from esdglider.slocum import pipeline, rt
+
+from esdglider import aa, defaults, gcp, imagery, paths, plots, qartod, utils
+
+logger = logging.getLogger(__name__)
+
+### Variables for user to update
+deployment_name = "amlr06-20261121"    # "amlr08-20220513"
+mode = "rt"        # "delayed" or "rt"
+write_nc = True         # Write NC files?
+sci_use_m_depth = False # Use m_depth for science depth?
+prof_args = {}          # Named optional parameters for finding profiles
+
+### Consistent variables
+home = Path.home()
+mnt_path = home / "mnt-gcs"
+logs_bucket_name = defaults.BUCKET_LOGS
+logs_path = mnt_path / logs_bucket_name
+file_info, log_file_name = paths.get_file_info(Path(__file__))
+
+
+#------------------------------------------------------------------------------
+if __name__ == "__main__":
+    gcp.gcs_mount_bucket(logs_bucket_name, logs_path, ro=False)
+    logging.basicConfig(
+        filename=logs_path / log_file_name,
+        filemode="w",
+        format="%(name)s:%(asctime)s:%(levelname)s:%(message)s [line %(lineno)d]",
+        level=logging.INFO,
+        datefmt="%Y-%m-%d %H:%M:%S",
+    )
+    logging.captureWarnings(True)
+    logger.info("Beginning scheduled processing for %s", file_info)
+    print(f"Writing logs to {logs_path / log_file_name}")
+
+    logger.info("Generating glider paths---------------------")
+    glider_paths = paths.get_path_glider(
+        deployment_name = deployment_name, 
+        mode = mode, 
+        home_path = home,
+    )
+    gcp.gcs_mount_bucket(defaults.BUCKET_DATA_IN, glider_paths["data_in_path"], ro=True)
+    gcp.gcs_mount_bucket(defaults.BUCKET_DATA_OUT, glider_paths["data_out_path"], ro=False)
+
+    #--------------------------------------------------------------------------
+    logger.info("Rsyncing nrt files from SFMC to GCP---------------------")
+    if write_nc and mode == "rt":
+        rt.sync_sfmc_deployment(
+            deployment_name=deployment_name, 
+            bucket_name=defaults.BUCKET_DATA_IN, 
+            sfmc_path=str(home / "sfmc"), 
+            cache_path=glider_paths["cacdir"], 
+        )
+
+    # --- TEMPORARY: Ignore corrupted files from read-only bucket ---
+    import tempfile
+    bad_files = {"01740001.tbd", "01830006.tbd", "01830008.tbd", "1830006.tbd", "1830008.tbd"}
+    tmp_bin_dir = Path(tempfile.mkdtemp(prefix="glider_rt_test_"))
+
+    for k, v in glider_paths.items():
+        if isinstance(v, (str, Path)) and str(v).rstrip("/").endswith("binary/rt"):
+            for f in Path(v).iterdir():
+                if f.name not in bad_files:
+                    (tmp_bin_dir / f.name).symlink_to(f)
+            glider_paths[k] = tmp_bin_dir if isinstance(v, Path) else str(tmp_bin_dir)
+            logger.warning("TEMP TEST: Using filtered binary dir %s", tmp_bin_dir)
+
+    #--------------------------------------------------------------------------
+    ### Timeseries and gridded netCDF generation
+    logger.info("Generating timeseries netCDF files---------------------")
+    outname_dict_ts = pipeline.generate_timeseries(
+        deployment_name = deployment_name, 
+        mode = mode, 
+        glider_paths=glider_paths,
+        write_raw=write_nc,
+        write_eng=write_nc,
+        write_sci=write_nc,
+        sci_use_m_depth=sci_use_m_depth, 
+        file_info=file_info,
+        # binary_search="*.[de]cd", 
+        prof_args=prof_args, 
+    )
+
+    # if write_nc:      #IF NECESSARY
+    #     logger.info("Correcting data---------------------")
+    #     # Recalculate flbbcd values and correct cdom
+    #     pipeline.correct_flbbcd_raw_sci(glider_paths=glider_paths)
+    #     pipeline.correct_cdom_raw_sci(glider_paths=glider_paths)
+
+    # if write_nc:      #IF NECESSARY
+    #     logger.info("Adjusting datasets, after review---------------------")
+    #     # Correct profile indices, and make other adjustments to netCDF files
+    #     tsraw = xr.load_dataset(outname_dict_ts["outname_tsraw"])
+    #     tseng = xr.load_dataset(outname_dict_ts["outname_tseng"])
+    #     tssci = xr.load_dataset(outname_dict_ts["outname_tssci"])
+
+    #     # Removal of bad lat/lons
+    #     logger.info("Removing bad lat/lons")
+    #     ll1_start, ll1_stop = '2026-04-13 01:30:00', '2026-04-13 14:30:00'
+    #     bad_ll_slice = {"time": slice(ll1_start, ll1_stop)}
+    #     tseng["latitude"].loc[bad_ll_slice] = np.nan
+    #     tssci["latitude"].loc[bad_ll_slice] = np.nan
+    #     tseng["longitude"].loc[bad_ll_slice] = np.nan
+    #     tssci["longitude"].loc[bad_ll_slice] = np.nan
+    #     tssci.attrs["comment"] = utils.append_string(
+    #         tssci.attrs["comment"], 
+    #         (
+    #             "Removed bad latitude and longitude values in the time window "
+    #             f"({ll1_start}, {ll1_stop})"
+    #         )
+    #     )
+
+    #     # Removing bad science values
+    #     logger.info("Removing bad science values")
+    #     t1_start, t1_stop = "2026-10-06 13:43:06", "2026-10-06 13:44:07"
+    #     bad_ctd_slice1 = {"time": slice(t1_start, t1_stop)}
+    #     for i in ["salinity", "conductivity", "density", "potential_density"]:
+    #         tssci[i].loc[bad_ctd_slice1] = np.nan
+            
+    #     t2_start, t2_stop = "2026-10-07 21:17:56", "2026-10-07 21:41:02"
+    #     bad_ctd_slice2 = {"time": slice(t2_start, t2_stop)}
+    #     for i in ["salinity", "conductivity", "density", "potential_density"]:
+    #         tssci[i].loc[bad_ctd_slice2] = np.nan
+
+    #     tssci.attrs["comment"] = utils.append_string(
+    #         tssci.attrs["comment"], 
+    #         (
+    #             "Removed bad data for variables salinity, conductivity, density, "
+    #             "and potential_density in the time windows "
+    #             f"({t1_start}, {t1_stop}) and ({t2_start}, {t2_stop})"
+    #         )
+    #     )
+
+    #     # Write to NetCDF, if not writing through profile correction
+    #     tssci.to_netcdf(
+    #         outname_dict_ts["outname_tssci"], 
+    #         encoding={'time': core.TIME_ENCODING}
+    #     )
+
+    #     # Adjust profile index
+    #     logger.info("Correcting profile_indices")
+    #     tsraw["profile_index"].loc[{"time": "2024-11-13 15:14:59"}] = 590.5
+    #     tsraw["profile_index"].loc[
+    #         {"time": slice("2026-02-01 09:05", "2026-02-01 09:16:10")}
+    #     ] = 397
+
+    #     # Complete profile correction, and save modifed netCDFs
+    #     pipeline.complete_profile_correction(
+    #         tsraw=tsraw,
+    #         tseng=tseng,
+    #         tssci=tssci,
+    #         glider_paths=glider_paths,
+    #     )
+
+    # Using science netCDF files, after any corrections:
+    if write_nc:
+        logger.info("Generating qc flags---------------------")
+        qartod.run_qartod_qc(
+            input_file=outname_dict_ts["outname_tssci"],
+            output_file=outname_dict_ts["outname_tssci"],
+            overwrite_qc=True
+        )
+
+    logger.info("Generating gridded netCDF files---------------------")
+    outname_dict_gr = pipeline.generate_gridded(
+        glider_paths=glider_paths,
+        write_gridded=write_nc,
+    )
+
+    outname_dict = outname_dict_ts | outname_dict_gr
+
+
+    #--------------------------------------------------------------------------
+    # ### Ancillary data products
+    # tssci = xr.load_dataset(outname_dict["outname_tssci"])
+
+    # logger.info("Active Acoustics---------------------")
+    # aa_paths = paths.get_path_aa(deployment_name, mode, home_path=home)
+    # aa.ancillary_echoview(tssci, aa_paths)
+    
+    # logger.info("Imagery---------------------")
+    # img_paths = paths.get_path_imagery(deployment_name, home_path=home)
+    # gcp.gcs_mount_bucket(defaults.BUCKET_IMAGERY_META, img_paths["imagery_meta_path"], ro=True)
+    # imagery.imagery_timeseries(tssci, img_paths)
+
+
+    #--------------------------------------------------------------------------
+    ### Plots
+    logger.info("Generating plots---------------------")
+    # etopo_path = home / "ETOPO_2022_v1_15s_N45W135_erddap.nc"
+    # plots.esd_all_plots(
+    #     outname_dict,
+    #     crs="Mercator",
+    #     base_path=glider_paths["plotdir"],
+    #     bar_file=str(etopo_path),
+    # )
+    ## OR, for Antarctic ##
+    plots.esd_all_plots(
+        outname_dict,
+        crs="Mercator",
+        base_path=glider_paths["plotdir"],
+    )
+
+    #--------------------------------------------------------------------------
+    ## Profile files to the IOOS NGDAC
+    if write_nc:    
+        logger.info("Generating profile netCDF files---------------------")
+        pipeline.create_ngdac_profiles(
+            inname=outname_dict_ts["outname_tssci"],
+            outdir=glider_paths["ngdacdir"],
+            deploymentyaml=glider_paths["deploymentyaml"],
+            force=True,
+        )
+
+        if mode == "rt":
+            logger.info("Syncing profile netCDF files to NGDAC---------------------")
+            pipeline.sync_to_ngdac(
+                local_dir=glider_paths["ngdacdir"], 
+                dry_run=False, 
+            )
+
+    #--------------------------------------------------------------------------
+    logger.info("Completed scheduled processing")
